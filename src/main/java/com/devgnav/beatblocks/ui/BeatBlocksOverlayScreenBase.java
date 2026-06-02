@@ -1330,7 +1330,7 @@ public class BeatBlocksOverlayScreenBase extends Screen {
     }
 
     private static Identifier icon(String name) {
-        return com.devgnav.beatblocks.compat.IdentifierCompat.of("beatblocks", "textures/gui/icons/" + name);
+        return Identifier.of("beatblocks", "textures/gui/icons/" + name);
     }
 
     private static boolean hit(double mx, double my, int x, int y, int w, int h) {
