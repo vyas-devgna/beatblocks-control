@@ -80,6 +80,8 @@ public class BeatBlocksOverlayScreenBase extends Screen {
     private final Set<String> itemCoverLoading = new HashSet<>();
 
     private int mainScroll = 0;
+    private int queueScroll = 0;
+    private int queueVisibleRows = 1;
     private String lastTrackId = "";
     private int detailBackX, detailBackY, detailBackW, detailBackH;
     private int detailPlayX, detailPlayY, detailPlayW, detailPlayH;
@@ -111,6 +113,7 @@ public class BeatBlocksOverlayScreenBase extends Screen {
 
     @Override
     protected void init() {
+        Icons.preloadAll();
         refreshAll();
     }
 
@@ -281,15 +284,24 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         ctx.fill(qx + 8, y + 20, qx + qw - 8, y + 21, BORDER_DARK);
 
         if (queueItems.isEmpty()) {
+            queueScroll = 0;
             ctx.drawTextWithShadow(textRenderer, Text.literal("Queue is empty"), qx + 8, y + 28, TEXT_DARK);
         } else {
-            int qy = y + 26;
-            int maxRows = Math.max(1, (h - 40) / ROW_H);
+            int listTop = y + 26;
+            queueVisibleRows = Math.max(1, (h - 40) / ROW_H);
+            clampQueueScroll();
             queueListX = qx + 4;
-            queueListY = qy;
+            queueListY = listTop;
             queueListW = qw - 8;
-            queueListH = Math.min(queueItems.size(), maxRows) * ROW_H;
-            for (int i = 0; i < Math.min(queueItems.size(), maxRows); i++) {
+            queueListH = queueVisibleRows * ROW_H;
+
+            ctx.enableScissor(queueListX, queueListY, queueListX + queueListW, queueListY + queueListH);
+            int qy = listTop;
+            for (int row = 0; row < queueVisibleRows; row++) {
+                int i = queueScroll + row;
+                if (i >= queueItems.size()) {
+                    break;
+                }
                 BeatBlocksItem item = queueItems.get(i);
                 boolean selected = i == queueSelectedIndex;
                 boolean hovered = mx >= queueListX && mx < queueListX + queueListW && my >= qy && my < qy + ROW_H;
@@ -303,6 +315,18 @@ public class BeatBlocksOverlayScreenBase extends Screen {
                 ctx.drawTextWithShadow(textRenderer, trimText(item.name(), (qw - 72) / 6), qx + 50, qy + 4, TEXT_MAIN);
                 ctx.drawTextWithShadow(textRenderer, trimText(item.subtitle(), (qw - 72) / 6), qx + 50, qy + 15, TEXT_DIM);
                 qy += ROW_H;
+            }
+            ctx.disableScissor();
+
+            int maxOff = Math.max(0, queueItems.size() - queueVisibleRows);
+            if (maxOff > 0) {
+                int sbX = qx + qw - 6;
+                int trackY = listTop;
+                int trackH = queueListH;
+                ctx.fill(sbX, trackY, sbX + 3, trackY + trackH, 0xFF1A1A1A);
+                int handleH = Math.max(10, trackH * queueVisibleRows / queueItems.size());
+                int handleY = trackY + (int) ((trackH - handleH) * (queueScroll / (double) maxOff));
+                ctx.fill(sbX, handleY, sbX + 3, handleY + handleH, ACCENT_DIM);
             }
         }
     }
@@ -694,7 +718,7 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         int mainX = panelX + SIDEBAR_W;
 
         if (tab == Tab.NOW && hit(mx, my, queueListX, queueListY, queueListW, queueListH)) {
-            int idx = (int) ((my - queueListY) / ROW_H);
+            int idx = queueScroll + (int) ((my - queueListY) / ROW_H);
             if (idx >= 0 && idx < queueItems.size()) {
                 long now = System.currentTimeMillis();
                 boolean doubleClick = queueSelectedIndex == idx && now - lastQueueClickAt < 350;
@@ -789,6 +813,29 @@ public class BeatBlocksOverlayScreenBase extends Screen {
             return true;
         }
         if (mx < panelX + SIDEBAR_W) return true;
+
+        int contentX = panelX + SIDEBAR_W;
+        int contentY = panelY;
+        int contentW = panelW - SIDEBAR_W;
+        int contentH = panelH - PLAYER_BAR_H;
+
+        if (tab == Tab.NOW && hit(mx, my, queueListX, queueListY, queueListW, queueListH)) {
+            queueScroll = Math.max(0, queueScroll - delta);
+            clampQueueScroll();
+            return true;
+        }
+
+        if (tab == Tab.NOW && mx >= contentX + 8 && mx < contentX + contentW - 8 && my >= contentY + 8 && my < contentY + contentH - 8) {
+            int halfW = (contentW - 16) / 2;
+            int qx = contentX + 8 + halfW + 16;
+            if (mx >= qx) {
+                queueScroll = Math.max(0, queueScroll - delta);
+                clampQueueScroll();
+                return true;
+            }
+            return true;
+        }
+
         mainScroll = Math.max(0, mainScroll - delta);
         clampMainScroll();
         maybeLoadMore();
@@ -870,7 +917,11 @@ public class BeatBlocksOverlayScreenBase extends Screen {
 
     private void refreshQueue() {
         services.api().getQueue()
-                .thenAccept(page -> runOnClient(() -> queueItems = new ArrayList<>(page.items())))
+                .thenAccept(page -> runOnClient(() -> {
+                    queueItems = new ArrayList<>(page.items());
+                    queueScroll = 0;
+                    clampQueueScroll();
+                }))
                 .exceptionally(err -> {
                     runOnClient(() -> queueItems = new ArrayList<>());
                     return null;
@@ -1102,6 +1153,12 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         int maxScroll = Math.max(0, items.size() - currentVisibleRows());
         if (mainScroll > maxScroll) mainScroll = maxScroll;
         if (mainScroll < 0) mainScroll = 0;
+    }
+
+    private void clampQueueScroll() {
+        int maxScroll = Math.max(0, queueItems.size() - queueVisibleRows);
+        if (queueScroll > maxScroll) queueScroll = maxScroll;
+        if (queueScroll < 0) queueScroll = 0;
     }
 
     private String statusForPage(Tab selectedTab, int loadedCount) {
