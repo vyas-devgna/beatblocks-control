@@ -18,7 +18,7 @@ import java.util.Locale;
  * Does NOT show the full BeatBlocks UI (playlists, albums, etc.).
  * Shown when Alt+I is pressed and mode is DEFAULT or Enhanced is unavailable.
  */
-public final class DefaultOverlayScreen extends Screen {
+public class DefaultOverlayScreenBase extends Screen {
 
     private static final int PANEL_BG = 0xEE0E0E0E;
     private static final int BORDER_HI = 0xFF3C3C3C;
@@ -52,7 +52,7 @@ public final class DefaultOverlayScreen extends Screen {
     private int hudScaleSliderW = 0;
     private boolean hudScaleDragging = false;
 
-    public DefaultOverlayScreen(BeatBlocksServices services) {
+    public DefaultOverlayScreenBase(BeatBlocksServices services) {
         super(Text.literal("BeatBlocks Settings"));
         this.services = services;
     }
@@ -268,8 +268,7 @@ public final class DefaultOverlayScreen extends Screen {
 
     // ── Input ────────────────────────────────────────────────────────────
 
-    @Override
-    public boolean mouseClicked(double mx, double my, int button) {
+    protected boolean mouseClickedImpl(double mx, double my, int button) {
         if (button != 0) return true;
 
         int panelW = Math.min(360, width - 40);
@@ -322,8 +321,7 @@ public final class DefaultOverlayScreen extends Screen {
         return true; // consume all clicks
     }
 
-    @Override
-    public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
+    protected boolean mouseDraggedImpl(double mx, double my, int button, double dx, double dy) {
         if (hudScaleDragging && button == 0) {
             updateHudScaleFromMouse(mx);
             BeatBlocksHudRenderer.showPreviewFor(HUD_PREVIEW_MS);
@@ -332,8 +330,7 @@ public final class DefaultOverlayScreen extends Screen {
         return true;
     }
 
-    @Override
-    public boolean mouseReleased(double mx, double my, int button) {
+    protected boolean mouseReleasedImpl(double mx, double my, int button) {
         if (button == 0 && hudScaleDragging) {
             updateHudScaleFromMouse(mx);
             hudScaleDragging = false;
@@ -344,8 +341,7 @@ public final class DefaultOverlayScreen extends Screen {
         return true;
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    protected boolean keyPressedImpl(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             close();
             return true;
@@ -354,13 +350,11 @@ public final class DefaultOverlayScreen extends Screen {
         return true;
     }
 
-    @Override
-    public boolean charTyped(char chr, int modifiers) {
+    protected boolean charTypedImpl(int codePoint, int modifiers) {
         return true; // consume all
     }
 
-    @Override
-    public boolean mouseScrolled(double mx, double my, double hAmount, double vAmount) {
+    protected boolean mouseScrolledImpl(double mx, double my, double hAmount, double vAmount) {
         return true; // consume all
     }
 

@@ -13,6 +13,8 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import com.devgnav.beatblocks.compat.InputUtilCompat;
+import com.devgnav.beatblocks.compat.KeyBindingCompat;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
@@ -38,7 +40,7 @@ public final class BeatBlocksClient implements ClientModInitializer {
         services = BeatBlocksServices.bootstrap();
 
         // Overlay hotkey: Alt+I (configurable in Controls)
-        openOverlayKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        openOverlayKey = KeyBindingHelper.registerKeyBinding(KeyBindingCompat.create(
                 "key.beatblocks.open_overlay",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_I,
@@ -46,21 +48,21 @@ public final class BeatBlocksClient implements ClientModInitializer {
         ));
 
         // Playback hotkeys: J, K, L
-        playPauseKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        playPauseKey = KeyBindingHelper.registerKeyBinding(KeyBindingCompat.create(
                 "key.beatblocks.play_pause",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_K,
                 "category.beatblocks"
         ));
 
-        nextKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        nextKey = KeyBindingHelper.registerKeyBinding(KeyBindingCompat.create(
                 "key.beatblocks.next",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_L,
                 "category.beatblocks"
         ));
 
-        prevKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        prevKey = KeyBindingHelper.registerKeyBinding(KeyBindingCompat.create(
                 "key.beatblocks.prev",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_J,
@@ -117,8 +119,7 @@ public final class BeatBlocksClient implements ClientModInitializer {
     }
 
     private static boolean isAltDown(MinecraftClient client) {
-        long handle = client.getWindow().getHandle();
-        return InputUtil.isKeyPressed(handle, GLFW.GLFW_KEY_LEFT_ALT)
-                || InputUtil.isKeyPressed(handle, GLFW.GLFW_KEY_RIGHT_ALT);
+        return InputUtilCompat.isKeyPressed(client, GLFW.GLFW_KEY_LEFT_ALT)
+                || InputUtilCompat.isKeyPressed(client, GLFW.GLFW_KEY_RIGHT_ALT);
     }
 }

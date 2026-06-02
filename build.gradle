@@ -3,6 +3,20 @@ plugins {
     id 'maven-publish'
 }
 
+def modernInputApi(String mc) {
+    if (mc.startsWith('26.')) return true
+    def parts = mc.split('\\.')
+    if (parts.length < 3) return false
+    int major = parts[0].toInteger()
+    if (major > 1) return true
+    int minor = parts[1].toInteger()
+    int patch = parts[2].toInteger()
+    return minor > 21 || (minor == 21 && patch >= 9)
+}
+
+def useModernInput = modernInputApi(project.minecraft_version)
+sourceSets.main.java.srcDir useModernInput ? 'src/modern/java' : 'src/legacy/java'
+
 version = project.mod_version
 group = project.maven_group
 base { archivesName = project.archives_base_name }

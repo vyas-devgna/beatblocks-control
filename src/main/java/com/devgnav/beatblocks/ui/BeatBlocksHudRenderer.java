@@ -115,9 +115,9 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         int textY1 = y + p + Math.max(1, (int) Math.round(3 * hudScale));
         int textY2 = textY1 + Math.max(8, (int) Math.round(12 * textScale));
 
-        drawScaledText(context, textRenderer, Text.literal(trackName), textX, textY1, TEXT_MAIN, textScale);
+        DrawMatrixCompat.drawScaledText(context, textRenderer, Text.literal(trackName), textX, textY1, TEXT_MAIN, textScale);
         if (h >= 30) {
-            drawScaledText(context, textRenderer, Text.literal(artistName), textX, textY2, TEXT_DIM, textScale);
+            DrawMatrixCompat.drawScaledText(context, textRenderer, Text.literal(artistName), textX, textY2, TEXT_DIM, textScale);
         }
 
         // Subtle full-width bottom progress line
@@ -161,7 +161,7 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         context.fill(x - 1, y - 1, x + size + 1, y + size + 1, 0xFF000000);
         net.minecraft.util.Identifier textureId = com.devgnav.beatblocks.image.CoverTextureManager.getOrCreateTexture(loadedCoverUrl, cover);
         if (textureId != null) {
-            GuiDrawCompat.drawGuiTexture(context, textureId, x, y, size);
+            GuiDrawCompat.drawTexture(context, textureId, x, y, size, size, cover.width(), cover.height());
         } else {
             renderCoverPlaceholder(context, x, y, size);
         }
@@ -180,14 +180,6 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         context.fill(x, y, x + 1, y + h, 0xFF3C3C3C);
         context.fill(x, y + h - 1, x + w, y + h, 0xFF141414);
         context.fill(x + w - 1, y, x + w, y + h, 0xFF141414);
-    }
-
-    private static void drawScaledText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int color, float scale) {
-        context.getMatrices().push();
-        context.getMatrices().translate(x, y, 0);
-        context.getMatrices().scale(scale, scale, 1.0f);
-        context.drawTextWithShadow(textRenderer, text, 0, 0, color);
-        context.getMatrices().pop();
     }
 
     private static String trimToWidth(String value, int maxWidth, TextRenderer textRenderer) {

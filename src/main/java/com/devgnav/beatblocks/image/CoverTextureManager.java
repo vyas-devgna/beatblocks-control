@@ -1,5 +1,7 @@
 package com.devgnav.beatblocks.image;
 
+import com.devgnav.beatblocks.compat.IdentifierCompat;
+import com.devgnav.beatblocks.compat.TextureFilterCompat;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
@@ -16,9 +18,10 @@ public final class CoverTextureManager {
         protected boolean removeEldestEntry(Map.Entry<String, Identifier> eldest) {
             if (size() > 128) {
                 Identifier id = eldest.getValue();
-                MinecraftClient.getInstance().execute(() -> {
-                    MinecraftClient.getInstance().getTextureManager().destroyTexture(id);
-                });
+                MinecraftClient client = MinecraftClient.getInstance();
+                if (client != null) {
+                    client.execute(() -> client.getTextureManager().destroyTexture(id));
+                }
                 return true;
             }
             return false;
@@ -26,7 +29,7 @@ public final class CoverTextureManager {
     };
 
     public static Identifier getOrCreateTexture(String key, PixelCover cover) {
-        if (key == null || cover == null) return null;
+        if (key == null || key.isBlank() || cover == null) return null;
         synchronized (TEXTURE_CACHE) {
             Identifier existing = TEXTURE_CACHE.get(key);
             if (existing != null) return existing;
@@ -43,13 +46,19 @@ public final class CoverTextureManager {
 
                 NativeImageBackedTexture texture = NativeImageCompat.createTexture(image);
                 String safeKey = UUID.nameUUIDFromBytes(key.getBytes(StandardCharsets.UTF_8)).toString().replace("-", "");
-                Identifier id = Identifier.of("beatblocks", "cover_" + safeKey);
-                
-                MinecraftClient.getInstance().execute(() -> {
-                    texture.setFilter(true, false);
-                    MinecraftClient.getInstance().getTextureManager().registerTexture(id, texture);
-                });
-                
+                Identifier id = IdentifierCompat.of("beatblocks", "cover_" + safeKey);
+
+                MinecraftClient client = MinecraftClient.getInstance();
+                Runnable upload = () -> {
+                    TextureFilterCompat.setBilinear(texture);
+                    client.getTextureManager().registerTexture(id, texture);
+                };
+                if (client.isOnThread()) {
+                    upload.run();
+                } else {
+                    client.execute(upload);
+                }
+
                 TEXTURE_CACHE.put(key, id);
                 return id;
             } catch (Exception e) {

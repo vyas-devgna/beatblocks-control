@@ -1,6 +1,6 @@
 # BeatBlocks Control
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.21–1.21.5-brightgreen?style=flat-square)](https://minecraft.net)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.21–1.21.11-brightgreen?style=flat-square)](https://minecraft.net)
 [![Fabric](https://img.shields.io/badge/Loader-Fabric-blue?style=flat-square)](https://fabricmc.net)
 [![Java](https://img.shields.io/badge/Java-21+-orange?style=flat-square&logo=openjdk)](https://adoptium.net)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
@@ -29,6 +29,12 @@ Pre-built JARs are published per version (see [Releases](https://github.com/vyas
 
 | Minecraft | Release asset |
 |-----------|---------------|
+| 1.21.11 | `beatblocks-control-mc-1.21.11.jar` |
+| 1.21.10 | `beatblocks-control-mc-1.21.10.jar` |
+| 1.21.9 | `beatblocks-control-mc-1.21.9.jar` |
+| 1.21.8 | `beatblocks-control-mc-1.21.8.jar` |
+| 1.21.7 | `beatblocks-control-mc-1.21.7.jar` |
+| 1.21.6 | `beatblocks-control-mc-1.21.6.jar` |
 | 1.21.5 | `beatblocks-control-mc-1.21.5.jar` |
 | 1.21.4 | `beatblocks-control-mc-1.21.4.jar` |
 | 1.21.3 | `beatblocks-control-mc-1.21.3.jar` |
@@ -36,7 +42,7 @@ Pre-built JARs are published per version (see [Releases](https://github.com/vyas
 | 1.21.1 | `beatblocks-control-mc-1.21.1.jar` |
 | 1.21 | `beatblocks-control-mc-1.21.jar` |
 
-Newer Minecraft releases need a **new tested build** — do not assume a 1.21.5 JAR works on 1.22+.
+Use the JAR that matches your Minecraft patch version exactly.
 
 ## How it works
 
@@ -71,7 +77,7 @@ The mod starts an HTTP server on `127.0.0.1:50321`. The Spicetify extension:
 
 ### Prerequisites
 
-- Minecraft Java **1.21 – 1.21.5** with **Fabric Loader** ≥ 0.16.10 and **Fabric API**
+- Minecraft Java **1.21 – 1.21.11** with **Fabric Loader** ≥ 0.16.10 and **Fabric API**
 - Desktop music player with **Spicetify** (Windows: typical install uses `Spotify.exe`)
 - **Java 21+** for building; the game runtime can use the launcher’s bundled Java
 

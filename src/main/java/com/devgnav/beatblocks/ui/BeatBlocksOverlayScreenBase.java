@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public final class BeatBlocksOverlayScreen extends Screen {
+public class BeatBlocksOverlayScreenBase extends Screen {
     // ── Color Palette ───────────────────────────────────────────────────
     private static final int BG_DARK = 0xF0101010;
     private static final int PANEL_BG = 0xEE0B0B0B;
@@ -124,7 +124,7 @@ public final class BeatBlocksOverlayScreen extends Screen {
     private int volumeBeforeMute = 50;
     private long lastVolumeSendAt = 0L;
 
-    public BeatBlocksOverlayScreen(BeatBlocksServices services) {
+    public BeatBlocksOverlayScreenBase(BeatBlocksServices services) {
         super(Text.literal("BeatBlocks"));
         this.services = services;
     }
@@ -602,9 +602,7 @@ public final class BeatBlocksOverlayScreen extends Screen {
 
     // ── Input ────────────────────────────────────────────────────────────
 
-    @Override
-    public boolean mouseClicked(double mx, double my, int button) {
-        if (super.mouseClicked(mx, my, button)) return true;
+    protected boolean mouseClickedImpl(double mx, double my, int button) {
         if (button != 0) return true; // consume all mouse buttons
 
         int panelW = panelW();
@@ -746,8 +744,7 @@ public final class BeatBlocksOverlayScreen extends Screen {
         return true; // consume all clicks
     }
 
-    @Override
-    public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
+    protected boolean mouseDraggedImpl(double mx, double my, int button, double dx, double dy) {
         if (button == 0 && volumeDragging) {
             updateVolumeFromMouse(mx, false);
             return true;
@@ -755,8 +752,7 @@ public final class BeatBlocksOverlayScreen extends Screen {
         return true;
     }
 
-    @Override
-    public boolean mouseReleased(double mx, double my, int button) {
+    protected boolean mouseReleasedImpl(double mx, double my, int button) {
         if (button == 0 && volumeDragging) {
             updateVolumeFromMouse(mx, true);
             volumeDragging = false;
@@ -765,8 +761,7 @@ public final class BeatBlocksOverlayScreen extends Screen {
         return true;
     }
 
-    @Override
-    public boolean mouseScrolled(double mx, double my, double hAmount, double vAmount) {
+    protected boolean mouseScrolledImpl(double mx, double my, double hAmount, double vAmount) {
         int delta = (int) Math.round(vAmount);
         if (delta == 0 && vAmount != 0) delta = vAmount > 0 ? 1 : -1;
         int panelX = panelX();
@@ -790,8 +785,7 @@ public final class BeatBlocksOverlayScreen extends Screen {
         return true;
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    protected boolean keyPressedImpl(int keyCode, int scanCode, int modifiers) {
         // ESC closes
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             close();
@@ -839,8 +833,7 @@ public final class BeatBlocksOverlayScreen extends Screen {
         return true;
     }
 
-    @Override
-    public boolean charTyped(char chr, int modifiers) {
+    protected boolean charTypedImpl(int codePoint, int modifiers) {
         return true; // consume ALL char input
     }
 
@@ -1257,9 +1250,13 @@ public final class BeatBlocksOverlayScreen extends Screen {
 
     private void renderCover(DrawContext ctx, String key, PixelCover cover, int x, int y, int size) {
         ctx.fill(x - 1, y - 1, x + size + 1, y + size + 1, 0xFF000000);
+        if (key == null || key.isBlank()) {
+            renderCoverPlaceholder(ctx, x, y, size);
+            return;
+        }
         net.minecraft.util.Identifier textureId = com.devgnav.beatblocks.image.CoverTextureManager.getOrCreateTexture(key, cover);
         if (textureId != null) {
-            GuiDrawCompat.drawGuiTexture(ctx, textureId, x, y, size);
+            GuiDrawCompat.drawTexture(ctx, textureId, x, y, size, size, cover.width(), cover.height());
         } else {
             renderCoverPlaceholder(ctx, x, y, size);
         }
@@ -1324,15 +1321,16 @@ public final class BeatBlocksOverlayScreen extends Screen {
         int bg = active ? ACTIVE_BG : hovered ? HOVER_BG : 0x00000000;
         if (bg != 0) ctx.fill(x - 2, y - 2, x + w + 2, y + h + 2, bg);
         if (active) ctx.fill(x - 2, y + h + 1, x + w + 2, y + h + 2, ACCENT);
-        drawIcon(ctx, icon, x, y, Math.min(w, h));
+        int iconSize = Math.max(8, Math.min(w, h) - 2);
+        drawIcon(ctx, icon, x + (w - iconSize) / 2, y + (h - iconSize) / 2, iconSize);
     }
 
     private static void drawIcon(DrawContext ctx, Identifier icon, int x, int y, int size) {
-        GuiDrawCompat.drawGuiTexture(ctx, icon, x, y, size, size, ICON_TEXTURE_SIZE, ICON_TEXTURE_SIZE);
+        GuiDrawCompat.drawTexture(ctx, icon, x, y, size, size, ICON_TEXTURE_SIZE, ICON_TEXTURE_SIZE);
     }
 
     private static Identifier icon(String name) {
-        return Identifier.of("beatblocks", "textures/gui/icons/" + name + ".png");
+        return com.devgnav.beatblocks.compat.IdentifierCompat.of("beatblocks", "textures/gui/icons/" + name);
     }
 
     private static boolean hit(double mx, double my, int x, int y, int w, int h) {
