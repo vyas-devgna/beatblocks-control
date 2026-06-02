@@ -7,11 +7,12 @@ import net.minecraft.util.Identifier;
 public final class GuiDrawCompat {
     private GuiDrawCompat() {}
 
-    public static void drawTexture(DrawContext context, Identifier texture, int x, int y, int width, int height, int textureWidth, int textureHeight) {
+    public static void drawTexture(DrawContext context, Identifier texture, int x, int y, int screenW, int screenH, int regionW, int regionH) {
         try {
-            context.drawTexture(texture, x, y, 0f, 0f, width, height, textureWidth, textureHeight);
+            context.drawTexture(texture, x, y, 0f, 0f, screenW, screenH, regionW, regionH);
+            return;
         } catch (Throwable t) {
-            drawFallback(context, x, y, width, height);
+            drawFallback(context, x, y, screenW, screenH);
         }
     }
 

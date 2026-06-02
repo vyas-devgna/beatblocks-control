@@ -8,17 +8,25 @@ import net.minecraft.util.Identifier;
 public final class GuiDrawCompat {
     private GuiDrawCompat() {}
 
-    public static void drawTexture(DrawContext context, Identifier texture, int x, int y, int width, int height, int textureWidth, int textureHeight) {
+    /**
+     * Draws a texture region scaled to screen size.
+     *
+     * @param screenW drawn width on screen
+     * @param screenH drawn height on screen
+     * @param regionW source region width in texture pixels
+     * @param regionH source region height in texture pixels
+     */
+    public static void drawTexture(DrawContext context, Identifier texture, int x, int y, int screenW, int screenH, int regionW, int regionH) {
         try {
-            context.drawTexture(RenderLayer::getGuiTextured, texture, x, y, 0f, 0f, width, height, textureWidth, textureHeight);
+            context.drawTexture(RenderLayer::getGuiTextured, texture, x, y, 0f, 0f, screenW, screenH, regionW, regionH, regionW, regionH, 0xFFFFFFFF);
             return;
         } catch (Throwable ignored) {
         }
         try {
-            context.drawTexture(RenderLayer::getGuiTextured, texture, x, y, 0f, 0f, width, height, textureWidth, textureHeight, 0xFFFFFFFF);
+            context.drawTexture(RenderLayer::getGuiTextured, texture, x, y, 0f, 0f, screenW, screenH, regionW, regionH);
             return;
         } catch (Throwable t) {
-            drawFallback(context, x, y, width, height);
+            drawFallback(context, x, y, screenW, screenH);
         }
     }
 
