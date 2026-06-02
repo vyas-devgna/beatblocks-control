@@ -29,10 +29,19 @@ public final class CoverTextureManager {
     };
 
     public static Identifier getOrCreateTexture(String key, PixelCover cover) {
-        if (key == null || key.isBlank() || cover == null) return null;
+        if (key == null || key.isBlank() || cover == null) {
+            return null;
+        }
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client == null) {
+            return null;
+        }
+
         synchronized (TEXTURE_CACHE) {
             Identifier existing = TEXTURE_CACHE.get(key);
-            if (existing != null) return existing;
+            if (existing != null) {
+                return existing;
+            }
 
             try {
                 int w = cover.width();
@@ -48,22 +57,26 @@ public final class CoverTextureManager {
                 String safeKey = UUID.nameUUIDFromBytes(key.getBytes(StandardCharsets.UTF_8)).toString().replace("-", "");
                 Identifier id = IdentifierCompat.of("beatblocks", "cover_" + safeKey);
 
-                MinecraftClient client = MinecraftClient.getInstance();
-                Runnable upload = () -> {
-                    TextureFilterCompat.setBilinear(texture);
-                    client.getTextureManager().registerTexture(id, texture);
-                };
-                if (client.isOnThread()) {
-                    upload.run();
-                } else {
-                    client.execute(upload);
+                if (!client.isOnThread()) {
+                    client.execute(() -> registerTexture(client, key, id, texture));
+                    return null;
                 }
-
-                TEXTURE_CACHE.put(key, id);
+                registerTexture(client, key, id, texture);
                 return id;
             } catch (Exception e) {
                 return null;
             }
+        }
+    }
+
+    private static void registerTexture(MinecraftClient client, String key, Identifier id, NativeImageBackedTexture texture) {
+        synchronized (TEXTURE_CACHE) {
+            if (TEXTURE_CACHE.containsKey(key)) {
+                return;
+            }
+            TextureFilterCompat.setBilinear(texture);
+            client.getTextureManager().registerTexture(id, texture);
+            TEXTURE_CACHE.put(key, id);
         }
     }
 }

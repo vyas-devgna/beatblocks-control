@@ -21,6 +21,7 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
     private static final int ACCENT = 0xFF1DB954;
     private static final int TEXT_MAIN = 0xFFEFEFEF;
     private static final int TEXT_DIM = 0xFFAAAAAA;
+    private static final int FONT_HEIGHT = 9;
     private static volatile long previewUntilMs = 0L;
 
     private final BeatBlocksServices services;
@@ -44,12 +45,9 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         BeatBlocksConfig config = services.config();
         boolean previewing = System.currentTimeMillis() < previewUntilMs;
 
-        // HUD visibility checks
         if (!config.hudEnabled && !previewing) return;
         if (client.options.hudHidden && !previewing) return;
         if (client.currentScreen != null && config.hudAutoHide && !previewing) return;
-
-        // Auto-hide during low FPS
         if (config.hudAutoHide && client.getCurrentFps() < 15 && !previewing) return;
 
         PlaybackState playback = services.api().currentState();
@@ -58,7 +56,6 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         BeatBlocksItem track = playback.track();
         TextRenderer textRenderer = client.textRenderer;
 
-        // Subtle action bar message when a new song starts
         if (track != null && config.toastEnabled && !track.id().equals(lastTrackId)) {
             lastTrackId = track.id();
             if (client.player != null) {
@@ -72,11 +69,9 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         int screenW = client.getWindow().getScaledWidth();
         int screenH = client.getWindow().getScaledHeight();
         double hudScale = Math.max(HUD_SCALE_MIN, Math.min(HUD_SCALE_MAX, config.hudScaleMultiplier));
-        float textScale = (float) Math.max(0.50, Math.min(0.92, 0.50 + hudScale * 0.28));
 
         int w = Math.max(96, Math.min((int) Math.round(BASE_WIDTH * hudScale), Math.max(96, screenW - 4)));
         int h = Math.max(24, Math.min((int) Math.round(BASE_HEIGHT * hudScale), Math.max(24, screenH / 4)));
-        // Keep room for track + artist above the progress bar (fixes missing artist below ~70% scale)
         int minHeight = Math.max(32, (int) Math.round(36 * hudScale));
         h = Math.min(Math.max(h, minHeight), Math.max(24, screenH / 4));
         int p = Math.max(2, Math.min((int) Math.round(BASE_PADDING * hudScale), 10));
@@ -94,41 +89,46 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         x = Math.max(0, Math.min(x, screenW - w));
         y = Math.max(0, Math.min(y, screenH - h));
 
-        // Draw HUD panel background
         drawPanel(context, x, y, w, h);
 
-        // Load cover art
         loadCoverIfNeeded(track != null ? track.imageUrl() : null);
 
-        // Cover art (square, left-aligned)
-        int coverSize = h - 2 * p;
-        if (currentCover != null) {
-            renderPixelCover(context, currentCover, x + p, y + p, coverSize);
-        } else {
-            renderCoverPlaceholder(context, x + p, y + p, coverSize);
-        }
-
-        // Text area (fills remaining space to the right of cover art)
-        int textGap = Math.max(4, (int) Math.round(5 * hudScale));
-        int textX = x + p + coverSize + textGap;
-        int textAreaWidth = Math.max(24, w - coverSize - 2 * p - textGap);
-
-        String trackName = trimToScaledWidth(
-                track != null ? track.name() : "HUD Size Preview", textAreaWidth, textRenderer, textScale);
-        String artistName = trimToScaledWidth(
-                track != null ? track.subtitle() : "BeatBlocks", textAreaWidth, textRenderer, textScale);
-
-        int lineStep = Math.max(7, (int) Math.round(10 * textScale));
-        int textY1 = y + p + 1;
-        int textY2 = textY1 + lineStep;
         int barY = y + h - 2;
+        int innerTop = y + p;
+        int innerBottom = barY - 1;
 
-        DrawMatrixCompat.drawScaledText(context, textRenderer, Text.literal(trackName), textX, textY1, TEXT_MAIN, textScale);
-        if (textY2 + lineStep <= barY) {
-            DrawMatrixCompat.drawScaledText(context, textRenderer, Text.literal(artistName), textX, textY2, TEXT_DIM, textScale);
+        int coverSize = Math.min(innerBottom - innerTop, Math.max(16, (w - 3 * p) / 3));
+        int coverX = x + p;
+        int coverY = innerTop + Math.max(0, (innerBottom - innerTop - coverSize) / 2);
+
+        if (currentCover != null) {
+            renderPixelCover(context, currentCover, coverX, coverY, coverSize);
+        } else {
+            renderCoverPlaceholder(context, coverX, coverY, coverSize);
         }
 
-        // Subtle full-width bottom progress line
+        int textGap = Math.max(4, (int) Math.round(5 * hudScale));
+        int textX = coverX + coverSize + textGap;
+        int textRight = x + w - p;
+        int textAreaWidth = Math.max(8, textRight - textX);
+
+        String trackName = trimToWidth(
+                track != null ? track.name() : "HUD Size Preview", textAreaWidth, textRenderer);
+        String artistName = trimToWidth(
+                track != null ? track.subtitle() : "BeatBlocks", textAreaWidth, textRenderer);
+
+        int lineGap = 1;
+        int textY1 = innerTop;
+        int textY2 = textY1 + FONT_HEIGHT + lineGap;
+        boolean showArtist = textY2 + FONT_HEIGHT <= innerBottom;
+
+        context.enableScissor(textX, innerTop, textRight, innerBottom);
+        context.drawTextWithShadow(textRenderer, Text.literal(trackName), textX, textY1, TEXT_MAIN);
+        if (showArtist) {
+            context.drawTextWithShadow(textRenderer, Text.literal(artistName), textX, textY2, TEXT_DIM);
+        }
+        context.disableScissor();
+
         int barX = x;
         int barW = w;
         int durationMs = track != null ? track.durationMs() : 100_000;
@@ -150,7 +150,13 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         loadedCoverUrl = url;
         currentCover = null;
         services.imageCache().getCover(url).thenAccept(cover -> {
-            if (url.equals(loadedCoverUrl)) currentCover = cover;
+            MinecraftClient client = MinecraftClient.getInstance();
+            if (client == null) return;
+            client.execute(() -> {
+                if (url.equals(loadedCoverUrl)) {
+                    currentCover = cover;
+                }
+            });
         });
     }
 
@@ -189,20 +195,14 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         context.fill(x + w - 1, y, x + w, y + h, 0xFF141414);
     }
 
-    /** Trims using on-screen pixel width after {@link DrawMatrixCompat} scale is applied. */
-    private static String trimToScaledWidth(String value, int maxVisualWidth, TextRenderer textRenderer, float scale) {
+    private static String trimToWidth(String value, int maxWidth, TextRenderer textRenderer) {
         if (value == null || value.isBlank()) return "";
-        if (scaledWidth(textRenderer, value, scale) <= maxVisualWidth) return value;
+        if (textRenderer.getWidth(value) <= maxWidth) return value;
         String dots = "…";
-        int dotsVisual = scaledWidth(textRenderer, dots, scale);
-        while (value.length() > 0 && scaledWidth(textRenderer, value, scale) + dotsVisual > maxVisualWidth) {
+        int dotsWidth = textRenderer.getWidth(dots);
+        while (value.length() > 0 && textRenderer.getWidth(value) + dotsWidth > maxWidth) {
             value = value.substring(0, value.length() - 1);
         }
         return value.isEmpty() ? dots : value + dots;
     }
-
-    private static int scaledWidth(TextRenderer textRenderer, String text, float scale) {
-        return Math.max(1, Math.round(textRenderer.getWidth(text) * scale));
-    }
-
 }
