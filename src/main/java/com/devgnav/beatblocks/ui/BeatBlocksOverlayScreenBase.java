@@ -48,8 +48,7 @@ public class BeatBlocksOverlayScreenBase extends Screen {
     private static final int ROW_H = 28;
     private static final int ROW_COVER = 22;
     private static final int CONTEXT_HEADER_H = 78;
-    private static final int ICON_BUTTON_SIZE = 18;
-    private static final int ICON_PLAY_BUTTON_SIZE = 24;
+
 
     private final BeatBlocksServices services;
 
@@ -192,15 +191,7 @@ public class BeatBlocksOverlayScreenBase extends Screen {
 
         Tab[] navTabs = { Tab.NOW, Tab.PLAYLISTS, Tab.LIKED, Tab.ALBUMS, Tab.QUEUE, Tab.DIAGNOSTICS, Tab.SETTINGS };
         String[] navLabels = { "Now Playing", "Playlists", "Liked Songs", "Albums", "Queue", "Diagnostics", "Settings" };
-        OverlayIcons.Kind[] navIcons = {
-                OverlayIcons.Kind.NOW,
-                OverlayIcons.Kind.PLAYLIST,
-                OverlayIcons.Kind.LIKED,
-                OverlayIcons.Kind.ALBUM,
-                OverlayIcons.Kind.QUEUE,
-                OverlayIcons.Kind.DIAGNOSTICS,
-                OverlayIcons.Kind.SETTINGS
-        };
+        Icons[] navIcons = { Icons.NOW, Icons.PLAYLIST, Icons.LIKED, Icons.ALBUM, Icons.QUEUE, Icons.DIAGNOSTICS, Icons.SETTINGS };
 
         int itemY = sy;
         for (int i = 0; i < navTabs.length; i++) {
@@ -214,7 +205,7 @@ public class BeatBlocksOverlayScreenBase extends Screen {
                 ctx.fill(sx + 4, itemY, sx + sw - 4, itemY + 15, HOVER_BG);
             }
 
-            drawIcon(ctx, navIcons[i], sx + 10, itemY + 2, OverlayIcons.DISPLAY_SIZE, active ? TEXT_MAIN : TEXT_DIM);
+            drawIcon(ctx, navIcons[i], sx + 10, itemY + 2, Icons.DISPLAY);
             ctx.drawTextWithShadow(textRenderer, Text.literal(navLabels[i]), sx + 28, itemY + 5, active ? TEXT_MAIN : TEXT_DIM);
             itemY += 18;
         }
@@ -505,7 +496,6 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         int shownVolume = displayedVolume();
         if (!volumeDragging && playback.volumePercent() > 0) volumeBeforeMute = playback.volumePercent();
 
-        // Progress bar (full panel width, thin, at the very top of player bar)
         if (track != null && track.durationMs() > 0) {
             int progress = currentProgressMs();
             ctx.fill(barX, barY + 1, barX + barW, barY + 3, PROGRESS_BG);
@@ -513,83 +503,111 @@ public class BeatBlocksOverlayScreenBase extends Screen {
             ctx.fill(barX, barY + 1, barX + filled, barY + 3, ACCENT);
         }
 
-        // Left section: cover + track info
         int lx = barX + 8;
         int ly = barY + 6;
+        int trackInfoRight = lx + 120;
+        int miniCoverSize = PLAYER_BAR_H - 12;
         if (track != null) {
-            // Mini cover
-            int miniCoverSize = PLAYER_BAR_H - 12;
             if (currentCoverPng != null) {
                 renderPixelCover(ctx, currentCoverPng, lx, ly, miniCoverSize);
             } else {
                 ctx.fill(lx, ly, lx + miniCoverSize, ly + miniCoverSize, 0xFF141414);
             }
             lx += miniCoverSize + 6;
-            ctx.drawTextWithShadow(textRenderer, trimText(track.name(), 30), lx, ly + 4, TEXT_MAIN);
-            ctx.drawTextWithShadow(textRenderer, trimText(track.subtitle(), 36), lx, ly + 16, TEXT_DIM);
+            trackInfoRight = lx + 140;
+        }
+
+        PlayerBarLayout layout = PlayerBarLayout.compute(barX, barY, barW, PLAYER_BAR_H, trackInfoRight);
+        applyLayout(layout);
+
+        if (track != null) {
+            ctx.enableScissor(layout.trackLeft, barY, layout.trackRight, barY + PLAYER_BAR_H);
+            int maxW = layout.trackRight - lx;
+            ctx.drawTextWithShadow(textRenderer, Text.literal(trimToWidth(track.name(), maxW)), lx, ly + 4, TEXT_MAIN);
+            ctx.drawTextWithShadow(textRenderer, Text.literal(trimToWidth(track.subtitle(), maxW)), lx, ly + 16, TEXT_DIM);
+            ctx.disableScissor();
         } else {
             ctx.drawTextWithShadow(textRenderer, Text.literal("No track"), lx, ly + 10, TEXT_DARK);
         }
 
-        // Center/right: measured controls. Lower-priority buttons collapse first on narrow GUI scales.
-        int buttonY = barY + 12;
-        int rightReserved = Math.min(178, Math.max(108, barW / 3));
-        int controlsLeft = barX + Math.min(170, Math.max(96, barW / 4));
-        int controlsRight = barX + barW - rightReserved - 8;
-        int centerX = (controlsLeft + controlsRight) / 2;
-        boolean compactControls = controlsRight - controlsLeft < 170;
-        boolean tinyControls = controlsRight - controlsLeft < 138;
+        if (layout.showShuffle) {
+            drawIconButton(ctx, Icons.SHUFFLE, shuffleX, shuffleY, shuffleW, shuffleH, mx, my, playback.shuffle());
+        }
+        drawIconButton(ctx, Icons.PREVIOUS, prevX, prevY, prevW, prevH, mx, my, false);
+        drawIconButton(ctx, playback.playing() ? Icons.PAUSE : Icons.PLAY, playX, playY, playW, playH, mx, my, playback.playing());
+        drawIconButton(ctx, Icons.NEXT, nextX, nextY, nextW, nextH, mx, my, false);
+        if (layout.showRepeat) {
+            boolean repeatActive = !"off".equalsIgnoreCase(playback.repeatState());
+            Icons repeatIcon = "track".equalsIgnoreCase(playback.repeatState()) ? Icons.REPEAT_ONE : Icons.REPEAT;
+            drawIconButton(ctx, repeatIcon, repeatX, repeatY, repeatW, repeatH, mx, my, repeatActive);
+        }
+        if (layout.showHeart) {
+            drawIconButton(ctx, Icons.HEART, heartX, heartY, heartW, heartH, mx, my, false);
+        }
+        if (layout.showQueue) {
+            drawIconButton(ctx, Icons.QUEUE, queueButtonX, queueButtonY, queueButtonW, queueButtonH, mx, my, tab == Tab.QUEUE);
+        }
 
-        shuffleX = compactControls ? 0 : centerX - 80; shuffleY = buttonY + 2; shuffleW = compactControls ? 0 : ICON_BUTTON_SIZE; shuffleH = compactControls ? 0 : ICON_BUTTON_SIZE;
-        prevX = centerX - 52; prevY = buttonY + 2; prevW = ICON_BUTTON_SIZE; prevH = ICON_BUTTON_SIZE;
-        playX = centerX - 12; playY = buttonY; playW = ICON_PLAY_BUTTON_SIZE; playH = ICON_PLAY_BUTTON_SIZE;
-        nextX = centerX + 28; nextY = buttonY + 2; nextW = ICON_BUTTON_SIZE; nextH = ICON_BUTTON_SIZE;
-        repeatX = compactControls ? 0 : centerX + 58; repeatY = buttonY + 2; repeatW = compactControls ? 0 : ICON_BUTTON_SIZE; repeatH = compactControls ? 0 : ICON_BUTTON_SIZE;
-        heartX = tinyControls ? 0 : controlsRight - 46; heartY = buttonY + 2; heartW = tinyControls ? 0 : ICON_BUTTON_SIZE; heartH = tinyControls ? 0 : ICON_BUTTON_SIZE;
-        queueButtonX = tinyControls ? 0 : controlsRight - 20; queueButtonY = buttonY + 2; queueButtonW = tinyControls ? 0 : ICON_BUTTON_SIZE; queueButtonH = tinyControls ? 0 : ICON_BUTTON_SIZE;
-
-        drawIconButton(ctx, OverlayIcons.Kind.SHUFFLE, shuffleX, shuffleY, shuffleW, shuffleH, mx, my, playback.shuffle());
-        drawIconButton(ctx, OverlayIcons.Kind.PREVIOUS, prevX, prevY, prevW, prevH, mx, my, false);
-        drawIconButton(ctx, playback.playing() ? OverlayIcons.Kind.PAUSE : OverlayIcons.Kind.PLAY, playX, playY, playW, playH, mx, my, playback.playing());
-        drawIconButton(ctx, OverlayIcons.Kind.NEXT, nextX, nextY, nextW, nextH, mx, my, false);
-        boolean repeatActive = !"off".equalsIgnoreCase(playback.repeatState());
-        drawIconButton(ctx, "track".equalsIgnoreCase(playback.repeatState()) ? OverlayIcons.Kind.REPEAT_ONE : OverlayIcons.Kind.REPEAT,
-                repeatX, repeatY, repeatW, repeatH, mx, my, repeatActive);
-        drawIconButton(ctx, OverlayIcons.Kind.HEART, heartX, heartY, heartW, heartH, mx, my, false);
-        drawIconButton(ctx, OverlayIcons.Kind.QUEUE, queueButtonX, queueButtonY, queueButtonW, queueButtonH, mx, my, tab == Tab.QUEUE);
-
-        // Right: responsive volume slider + time
-        int rx = barX + barW - rightReserved;
-        volumeIconX = rx;
-        volumeIconY = barY + 13;
-        volumeIconW = ICON_BUTTON_SIZE;
-        volumeIconH = ICON_BUTTON_SIZE;
-        OverlayIcons.Kind volumeIcon = shownVolume == 0
-                ? OverlayIcons.Kind.VOLUME_MUTED
-                : shownVolume < 45 ? OverlayIcons.Kind.VOLUME_LOW : OverlayIcons.Kind.VOLUME;
-        drawIconButton(ctx, volumeIcon, volumeIconX, volumeIconY, volumeIconW, volumeIconH, mx, my, shownVolume == 0);
-
-        volumeSliderX = rx + 24;
-        volumeSliderY = barY + 19;
-        volumeSliderW = Math.max(42, Math.min(86, barX + barW - volumeSliderX - 46));
-        volumeSliderH = 10;
+        Icons volIcon = shownVolume == 0 ? Icons.VOLUME_MUTED : shownVolume < 45 ? Icons.VOLUME_LOW : Icons.VOLUME;
+        drawIconButton(ctx, volIcon, volumeIconX, volumeIconY, volumeIconW, volumeIconH, mx, my, shownVolume == 0);
         renderVolumeSlider(ctx, shownVolume, mx, my);
-
-        String volText = shownVolume + "%";
-        ctx.drawTextWithShadow(textRenderer, Text.literal(volText), volumeSliderX + volumeSliderW + 8, barY + 16, TEXT_DIM);
+        if (layout.showVolumeText) {
+            ctx.drawTextWithShadow(textRenderer, Text.literal(shownVolume + "%"), layout.volumeTextX, barY + 15, TEXT_DIM);
+        }
 
         if (track != null && track.durationMs() > 0) {
             String timeStr = formatMs(currentProgressMs()) + " / " + formatMs(track.durationMs());
             int timeW = textRenderer.getWidth(timeStr);
-            ctx.drawTextWithShadow(textRenderer, Text.literal(timeStr), Math.max(rx, barX + barW - timeW - 8), barY + 30, TEXT_DARK);
+            int timeX = Math.max(layout.trackRight + 4, barX + barW - timeW - 8);
+            if (timeX + timeW < volumeIconX - 4) {
+                ctx.drawTextWithShadow(textRenderer, Text.literal(timeStr), timeX, barY + 30, TEXT_DARK);
+            }
         }
 
-        // Status message (bottom-right)
         if (!statusMsg.isEmpty()) {
             int statusW = textRenderer.getWidth(statusMsg);
-            int maxStatusX = Math.max(barX + 8, rx - statusW - 12);
+            int maxStatusX = Math.max(barX + 8, volumeIconX - statusW - 8);
             ctx.drawTextWithShadow(textRenderer, Text.literal(statusMsg), maxStatusX, barY + PLAYER_BAR_H - 12, statusColor);
         }
+    }
+
+    private void applyLayout(PlayerBarLayout l) {
+        shuffleX = l.shuffleX;
+        shuffleY = l.shuffleY;
+        shuffleW = l.shuffleW;
+        shuffleH = l.shuffleH;
+        prevX = l.prevX;
+        prevY = l.prevY;
+        prevW = l.prevW;
+        prevH = l.prevH;
+        playX = l.playX;
+        playY = l.playY;
+        playW = l.playW;
+        playH = l.playH;
+        nextX = l.nextX;
+        nextY = l.nextY;
+        nextW = l.nextW;
+        nextH = l.nextH;
+        repeatX = l.repeatX;
+        repeatY = l.repeatY;
+        repeatW = l.repeatW;
+        repeatH = l.repeatH;
+        heartX = l.heartX;
+        heartY = l.heartY;
+        heartW = l.heartW;
+        heartH = l.heartH;
+        queueButtonX = l.queueX;
+        queueButtonY = l.queueY;
+        queueButtonW = l.queueW;
+        queueButtonH = l.queueH;
+        volumeIconX = l.volumeIconX;
+        volumeIconY = l.volumeIconY;
+        volumeIconW = l.volumeIconW;
+        volumeIconH = l.volumeIconH;
+        volumeSliderX = l.volumeSliderX;
+        volumeSliderY = l.volumeSliderY;
+        volumeSliderW = l.volumeSliderW;
+        volumeSliderH = l.volumeSliderH;
     }
 
     // ── Input ────────────────────────────────────────────────────────────
@@ -665,7 +683,7 @@ public class BeatBlocksOverlayScreenBase extends Screen {
                 toggleMute();
                 return true;
             }
-            if (hit(mx, my, volumeSliderX - 4, volumeSliderY - 5, volumeSliderW + 8, volumeSliderH + 10)) {
+            if (hit(mx, my, volumeSliderX - 2, volumeSliderY - 3, volumeSliderW + 4, 10)) {
                 volumeDragging = true;
                 updateVolumeFromMouse(mx, true);
                 return true;
@@ -1260,18 +1278,18 @@ public class BeatBlocksOverlayScreenBase extends Screen {
     }
 
     private void renderVolumeSlider(DrawContext ctx, int volume, int mx, int my) {
-        int trackY = volumeSliderY + volumeSliderH / 2 - 1;
-        boolean hovered = hit(mx, my, volumeSliderX - 4, volumeSliderY - 5, volumeSliderW + 8, volumeSliderH + 10);
-        ctx.fill(volumeSliderX, trackY, volumeSliderX + volumeSliderW, trackY + 3, 0xFF202020);
-        ctx.fill(volumeSliderX, trackY, volumeSliderX + volumeSliderW, trackY + 1, 0xFF3A3A3A);
+        if (volumeSliderW <= 0) return;
+        int trackY = volumeSliderY;
+        int hitH = 10;
+        boolean hovered = hit(mx, my, volumeSliderX - 2, trackY - 3, volumeSliderW + 4, hitH);
+        ctx.fill(volumeSliderX, trackY, volumeSliderX + volumeSliderW, trackY + volumeSliderH, 0xFF202020);
 
         int filled = Math.round(volumeSliderW * (Math.max(0, Math.min(100, volume)) / 100.0f));
-        ctx.fill(volumeSliderX, trackY, volumeSliderX + filled, trackY + 3, ACCENT);
+        ctx.fill(volumeSliderX, trackY, volumeSliderX + filled, trackY + volumeSliderH, ACCENT);
 
         int thumbX = volumeSliderX + filled;
         int thumbColor = hovered || volumeDragging ? ACCENT : TEXT_DIM;
-        ctx.fill(thumbX - 3, volumeSliderY, thumbX + 4, volumeSliderY + volumeSliderH, 0xFF050505);
-        ctx.fill(thumbX - 2, volumeSliderY + 1, thumbX + 3, volumeSliderY + volumeSliderH - 1, thumbColor);
+        ctx.fill(thumbX - 1, trackY - 2, thumbX + 2, trackY + volumeSliderH + 2, thumbColor);
     }
 
     private int displayedVolume() {
@@ -1307,19 +1325,30 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         sendVolume(volumeDragValue, true);
     }
 
-    private void drawIconButton(DrawContext ctx, OverlayIcons.Kind icon, int x, int y, int w, int h, int mx, int my, boolean active) {
+    private void drawIconButton(DrawContext ctx, Icons icon, int x, int y, int w, int h, int mx, int my, boolean active) {
         if (w <= 0 || h <= 0) return;
         boolean hovered = hit(mx, my, x, y, w, h);
         int bg = active ? ACTIVE_BG : hovered ? HOVER_BG : 0x00000000;
-        if (bg != 0) ctx.fill(x - 2, y - 2, x + w + 2, y + h + 2, bg);
-        if (active) ctx.fill(x - 2, y + h + 1, x + w + 2, y + h + 2, ACCENT);
-        int iconSize = OverlayIcons.DISPLAY_SIZE;
-        int color = active ? ACCENT : hovered ? TEXT_MAIN : TEXT_DIM;
-        drawIcon(ctx, icon, x + (w - iconSize) / 2, y + (h - iconSize) / 2, iconSize, color);
+        if (bg != 0) ctx.fill(x - 1, y - 1, x + w + 1, y + h + 1, bg);
+        if (active) ctx.fill(x - 1, y + h, x + w + 1, y + h + 1, ACCENT);
+        int s = Icons.DISPLAY;
+        drawIcon(ctx, icon, x + (w - s) / 2, y + (h - s) / 2, s);
     }
 
-    private static void drawIcon(DrawContext ctx, OverlayIcons.Kind icon, int x, int y, int size, int color) {
-        OverlayIcons.draw(ctx, icon, x, y, size, color);
+    private static void drawIcon(DrawContext ctx, Icons icon, int x, int y, int size) {
+        Icons.draw(ctx, icon, x, y, size);
+    }
+
+    private String trimToWidth(String text, int maxWidth) {
+        if (text == null || text.isEmpty() || maxWidth <= 0) return "";
+        if (textRenderer.getWidth(text) <= maxWidth) return text;
+        String dots = "...";
+        int dotW = textRenderer.getWidth(dots);
+        for (int i = text.length() - 1; i > 0; i--) {
+            String part = text.substring(0, i);
+            if (textRenderer.getWidth(part) + dotW <= maxWidth) return part + dots;
+        }
+        return dots;
     }
 
     private static boolean hit(double mx, double my, int x, int y, int w, int h) {
