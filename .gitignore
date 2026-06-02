@@ -1,0 +1,80 @@
+# Gradle / build output
+.gradle/
+build/
+out/
+run/
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+*.war
+*.nar
+*.ear
+
+# Local release artifacts. Upload these to GitHub Releases instead of committing them.
+releases/
+
+# Minecraft / launcher local state
+logs/
+crash-reports/
+saves/
+screenshots/
+resourcepacks/
+shaderpacks/
+config/
+options.txt
+usercache.json
+usernamecache.json
+servers.dat
+*.log
+*.log.gz
+hs_err_pid*
+replay_pid*
+
+# IDEs and editors
+.idea/
+.vscode/
+.project
+.classpath
+.settings/
+*.iml
+*.ipr
+*.iws
+*.swp
+*.swo
+*.tmp
+*.bak
+*.orig
+
+# Local session exports and decode tooling
+pi-session-*.html
+README-extracted.md
+scripts/session-decoded.json
+scripts/session-summary.txt
+scripts/codex-summary.txt
+scripts/assistant-text.txt
+scripts/decode-session.ps1
+scripts/parse_session.py
+scripts/parse_codex_session.py
+scripts/parse_codex_session2.py
+scripts/search_session.py
+scripts/extract_assistant_text.py
+scripts/extract_readme.py
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node / tool caches used for asset conversion
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store/
+
+# Secrets and local overrides
+.env
+.env.*
+!.env.example
+local.properties
+gradle-local.properties

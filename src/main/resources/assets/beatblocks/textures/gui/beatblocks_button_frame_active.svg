@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+    <!-- Button Interior Background (#101010) -->
+    <rect x="4" y="4" width="56" height="56" fill="#101010"/>
+    <!-- Outer Border (#080808) -->
+    <rect x="0" y="0" width="64" height="2" fill="#080808"/>
+    <rect x="0" y="62" width="64" height="2" fill="#080808"/>
+    <rect x="0" y="2" width="2" height="60" fill="#080808"/>
+    <rect x="62" y="2" width="2" height="60" fill="#080808"/>
+    <!-- Green Accent Highlight / Left Stripe (#1DB954) -->
+    <rect x="2" y="2" width="60" height="2" fill="#1DB954"/>
+    <rect x="2" y="4" width="2" height="56" fill="#1DB954"/>
+    <!-- Shadow (#141414) -->
+    <rect x="2" y="60" width="60" height="2" fill="#141414"/>
+    <rect x="60" y="4" width="2" height="56" fill="#141414"/>
+</svg>

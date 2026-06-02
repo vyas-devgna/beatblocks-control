@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+    <!-- Jukebox Left Face (#101010) -->
+    <polygon points="16,36 16,52 32,60 32,44" fill="#101010"/>
+    <!-- Jukebox Right Face (#141414) -->
+    <polygon points="32,44 32,60 48,52 48,36" fill="#141414"/>
+    <!-- Jukebox Top Face (#D8AF2F) -->
+    <polygon points="32,28 48,36 32,44 16,36" fill="#D8AF2F"/>
+    <!-- Jukebox Top Face Disc Slot (#080808) -->
+    <polygon points="32,34 36,36 32,38 28,36" fill="#080808"/>
+    <!-- Floating Music Note (#1DB954) -->
+    <path fill="#1DB954" d="M38 8l14-4v3l-14 4z M34 18h6v4h-6z M38 8h2v10h-2z M46 14h6v4h-6z M50 4h2v10h-2z"/>
+    <!-- Sparkles / Details (#D8AF2F) -->
+    <rect x="20" y="20" width="3" height="3" fill="#D8AF2F"/>
+    <rect x="52" y="26" width="3" height="3" fill="#D8AF2F"/>
+</svg>

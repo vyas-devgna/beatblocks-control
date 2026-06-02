@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "beatblocks",
+  "version": "${version}",
+  "name": "BeatBlocks Control",
+  "description": "Client-side BeatBlocks controller overlay for Minecraft using a local Spicetify bridge to your desktop music player. Playback, library browsing, queue controls, and sharp cached cover art. No OAuth login or API credentials required.",
+  "authors": ["Devgna Vyas"],
+  "contact": {
+    "homepage": "https://github.com/devgnav/beatblocks-control"
+  },
+  "license": "MIT",
+  "icon": "assets/beatblocks/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.devgnav.beatblocks.BeatBlocksClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "${minecraft_version}",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

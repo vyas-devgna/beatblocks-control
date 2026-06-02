@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+    <!-- Background (#101010) -->
+    <rect x="4" y="4" width="56" height="56" fill="#101010"/>
+    <!-- Outer Border (#080808) -->
+    <rect x="0" y="0" width="64" height="2" fill="#080808"/>
+    <rect x="0" y="62" width="64" height="2" fill="#080808"/>
+    <rect x="0" y="2" width="2" height="60" fill="#080808"/>
+    <rect x="62" y="2" width="2" height="60" fill="#080808"/>
+    <!-- Highlight (#3C3C3C) -->
+    <rect x="2" y="2" width="60" height="2" fill="#3C3C3C"/>
+    <rect x="2" y="4" width="2" height="56" fill="#3C3C3C"/>
+    <!-- Shadow (#141414) -->
+    <rect x="2" y="60" width="60" height="2" fill="#141414"/>
+    <rect x="60" y="4" width="2" height="56" fill="#141414"/>
+    <!-- Music Note Mark (#1DB954) -->
+    <path fill="#1DB954" d="M20 20l20-4v6l-20 4z M20 24v16h-4v8h8V24z M36 20v16h-4v8h8V20z"/>
+</svg>
