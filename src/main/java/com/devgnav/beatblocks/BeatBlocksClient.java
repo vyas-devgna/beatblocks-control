@@ -1,7 +1,6 @@
 package com.devgnav.beatblocks;
 
 import com.devgnav.beatblocks.mode.ModeManager;
-import com.devgnav.beatblocks.image.GuiIconRegistry;
 import com.devgnav.beatblocks.ui.DefaultOverlayScreen;
 import com.devgnav.beatblocks.ui.BeatBlocksHudRenderer;
 import com.devgnav.beatblocks.ui.BeatBlocksOverlayScreen;
@@ -106,8 +105,6 @@ public final class BeatBlocksClient implements ClientModInitializer {
                 }
             }
         });
-
-        ClientLifecycleEvents.CLIENT_STARTED.register(client -> client.execute(GuiIconRegistry::preloadAll));
 
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> services.close());
         LOGGER.info("BeatBlocks Control initialized — local Spicetify bridge on port {}", services.config().bridgePort);
