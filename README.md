@@ -25,7 +25,7 @@ Search was removed from the overlay and bridge — library browsing uses playlis
 
 ## Supported Minecraft versions
 
-Pre-built JARs are published per version (see [Releases](https://github.com/devgnav/beatblocks-control/releases)):
+Pre-built JARs are published per version (see [Releases](https://github.com/vyas-devgna/beatblocks-control/releases)):
 
 | Minecraft | Release asset |
 |-----------|---------------|
@@ -104,7 +104,7 @@ spicetify apply
 
 ### 3. Install the mod
 
-1. Download the JAR for your Minecraft version from [Releases](https://github.com/devgnav/beatblocks-control/releases)
+1. Download the JAR for your Minecraft version from [Releases](https://github.com/vyas-devgna/beatblocks-control/releases)
 2. Place it in your instance `mods/` folder with **Fabric API**
 3. Launch Minecraft
 

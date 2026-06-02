@@ -37,7 +37,7 @@ public final class DefaultOverlayScreen extends Screen {
     private static final double HUD_SCALE_MAX = 3.0;
     private static final long HUD_PREVIEW_MS = 1200L;
 
-    private static final String SETUP_URL = "https://github.com/devgnav/beatblocks-control#setup-guide";
+    private static final String SETUP_URL = "https://github.com/vyas-devgna/beatblocks-control#setup-guide";
 
     private final BeatBlocksServices services;
     private long lastPoll = 0L;
