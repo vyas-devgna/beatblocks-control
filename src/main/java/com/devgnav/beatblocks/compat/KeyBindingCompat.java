@@ -36,7 +36,7 @@ public final class KeyBindingCompat {
         Class<?> categoryClass = Class.forName("net.minecraft.client.option.KeyBinding$Category");
         try {
             Method create = categoryClass.getMethod("create", Identifier.class);
-            return create.invoke(null, IdentifierCompat.of("beatblocks", "main"));
+            return create.invoke(null, Identifier.of("beatblocks", "main"));
         } catch (NoSuchMethodException e) {
             return categoryClass.getField("MISC").get(null);
         }

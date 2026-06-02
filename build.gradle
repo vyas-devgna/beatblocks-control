@@ -17,6 +17,18 @@ def modernInputApi(String mc) {
 def useModernInput = modernInputApi(project.minecraft_version)
 sourceSets.main.java.srcDir useModernInput ? 'src/modern/java' : 'src/legacy/java'
 
+def drawApiKind(String mc) {
+    def parts = mc.split('\\.')
+    if (parts.length < 3) return 'legacy'
+    int minor = parts[1].toInteger()
+    int patch = parts[2].toInteger()
+    if (minor > 21 || (minor == 21 && patch >= 6)) return 'pipeline'
+    if (minor == 21 && patch >= 2) return 'function'
+    return 'legacy'
+}
+
+sourceSets.main.java.srcDir "src/draw-${drawApiKind(project.minecraft_version)}/java"
+
 version = project.mod_version
 group = project.maven_group
 base { archivesName = project.archives_base_name }
