@@ -4,88 +4,156 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * HUD text scaling uses matrix stacks that changed from 3D MatrixStack to 2D Matrix3x2fStack in newer Minecraft.
+ * HUD text scaling across MatrixStack (1.21.x) and Matrix3x2fStack APIs.
+ * Never fails during class load — probes lazily and falls back to unscaled text.
  */
 final class DrawMatrixCompat {
-    private static final Method PUSH;
-    private static final Method POP;
-    private static final Method TRANSLATE;
-    private static final Method SCALE;
-    private static final boolean TRANSLATE_2D;
-    private static final boolean SCALE_2D;
+    private static volatile boolean probed;
+    private static volatile boolean scalingAvailable;
 
-    static {
-        Method push = null;
-        Method pop = null;
-        Method translate = null;
-        Method scale = null;
-        boolean translate2d = false;
-        boolean scale2d = false;
+    private static Method getMatricesMethod;
+    private static Method pushMethod;
+    private static Method popMethod;
+    private static Method translateMethod;
+    private static Method scaleMethod;
+    private static boolean translate2d;
+    private static boolean scale2d;
 
-        try {
-            Class<?> matrixType = DrawContext.class.getMethod("getMatrices").getReturnType();
-
-            for (String name : new String[]{"push", "pushMatrix"}) {
-                try {
-                    push = matrixType.getMethod(name);
-                    break;
-                } catch (NoSuchMethodException ignored) {}
-            }
-            for (String name : new String[]{"pop", "popMatrix"}) {
-                try {
-                    pop = matrixType.getMethod(name);
-                    break;
-                } catch (NoSuchMethodException ignored) {}
-            }
-
-            try {
-                translate = matrixType.getMethod("translate", float.class, float.class);
-                translate2d = true;
-            } catch (NoSuchMethodException e) {
-                translate = matrixType.getMethod("translate", float.class, float.class, float.class);
-            }
-
-            try {
-                scale = matrixType.getMethod("scale", float.class, float.class);
-                scale2d = true;
-            } catch (NoSuchMethodException e) {
-                scale = matrixType.getMethod("scale", float.class, float.class, float.class);
-            }
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Could not probe DrawContext matrix API", e);
-        }
-
-        PUSH = push;
-        POP = pop;
-        TRANSLATE = translate;
-        SCALE = scale;
-        TRANSLATE_2D = translate2d;
-        SCALE_2D = scale2d;
-    }
+    private static Field matricesField;
 
     private DrawMatrixCompat() {}
 
     static void drawScaledText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int color, float scale) {
+        if (scale >= 0.99f && scale <= 1.01f) {
+            context.drawTextWithShadow(textRenderer, text, x, y, color);
+            return;
+        }
+
+        ensureProbed();
+        if (!scalingAvailable) {
+            context.drawTextWithShadow(textRenderer, text, x, y, color);
+            return;
+        }
+
         try {
-            Object matrices = context.getMatrices();
-            if (PUSH != null) PUSH.invoke(matrices);
-            if (TRANSLATE_2D) {
-                TRANSLATE.invoke(matrices, (float) x, (float) y);
-            } else {
-                TRANSLATE.invoke(matrices, (float) x, (float) y, 0f);
+            Object matrices = resolveMatrices(context);
+            if (matrices == null) {
+                context.drawTextWithShadow(textRenderer, text, x, y, color);
+                return;
             }
-            if (SCALE_2D) {
-                SCALE.invoke(matrices, scale, scale);
+            if (pushMethod != null) pushMethod.invoke(matrices);
+            if (translate2d) {
+                translateMethod.invoke(matrices, (float) x, (float) y);
             } else {
-                SCALE.invoke(matrices, scale, scale, 1.0f);
+                translateMethod.invoke(matrices, (float) x, (float) y, 0f);
+            }
+            if (scale2d) {
+                scaleMethod.invoke(matrices, scale, scale);
+            } else {
+                scaleMethod.invoke(matrices, scale, scale, 1.0f);
             }
             context.drawTextWithShadow(textRenderer, text, 0, 0, color);
-            if (POP != null) POP.invoke(matrices);
+            if (popMethod != null) popMethod.invoke(matrices);
         } catch (ReflectiveOperationException e) {
             context.drawTextWithShadow(textRenderer, text, x, y, color);
         }
+    }
+
+    private static synchronized void ensureProbed() {
+        if (probed) return;
+        probed = true;
+        try {
+            getMatricesMethod = findMatricesGetter();
+            if (getMatricesMethod == null) {
+                matricesField = findMatricesField();
+            }
+            if (getMatricesMethod == null && matricesField == null) {
+                scalingAvailable = false;
+                return;
+            }
+
+            Class<?> matrixType = getMatricesMethod != null
+                    ? getMatricesMethod.getReturnType()
+                    : matricesField.getType();
+            probeMatrixMethods(matrixType);
+            scalingAvailable = translateMethod != null && scaleMethod != null;
+        } catch (ReflectiveOperationException e) {
+            scalingAvailable = false;
+        }
+    }
+
+    private static Method findMatricesGetter() {
+        for (Method method : DrawContext.class.getMethods()) {
+            if (method.getParameterCount() != 0) continue;
+            String name = method.getName();
+            if ("getMatrices".equals(name) || "getMatrix".equals(name) || name.endsWith("Matrices")) {
+                return method;
+            }
+        }
+        for (Method method : DrawContext.class.getDeclaredMethods()) {
+            if (method.getParameterCount() != 0) continue;
+            String returnName = method.getReturnType().getSimpleName();
+            if (returnName.contains("Matrix")) {
+                method.setAccessible(true);
+                return method;
+            }
+        }
+        return null;
+    }
+
+    private static Field findMatricesField() throws ReflectiveOperationException {
+        for (Field field : DrawContext.class.getDeclaredFields()) {
+            String typeName = field.getType().getSimpleName();
+            if (typeName.contains("Matrix")) {
+                field.setAccessible(true);
+                return field;
+            }
+        }
+        return null;
+    }
+
+    private static void probeMatrixMethods(Class<?> matrixType) throws ReflectiveOperationException {
+        for (String name : new String[]{"push", "pushMatrix"}) {
+            try {
+                pushMethod = matrixType.getMethod(name);
+                break;
+            } catch (NoSuchMethodException ignored) {}
+        }
+        for (String name : new String[]{"pop", "popMatrix"}) {
+            try {
+                popMethod = matrixType.getMethod(name);
+                break;
+            } catch (NoSuchMethodException ignored) {}
+        }
+
+        try {
+            translateMethod = matrixType.getMethod("translate", float.class, float.class);
+            translate2d = true;
+        } catch (NoSuchMethodException e) {
+            translateMethod = matrixType.getMethod("translate", float.class, float.class, float.class);
+            translate2d = false;
+        }
+
+        try {
+            scaleMethod = matrixType.getMethod("scale", float.class, float.class);
+            scale2d = true;
+        } catch (NoSuchMethodException e) {
+            scaleMethod = matrixType.getMethod("scale", float.class, float.class, float.class);
+            scale2d = false;
+        }
+    }
+
+    private static Object resolveMatrices(DrawContext context) throws ReflectiveOperationException {
+        if (getMatricesMethod != null) {
+            return getMatricesMethod.invoke(context);
+        }
+        if (matricesField != null) {
+            return matricesField.get(context);
+        }
+        return null;
     }
 }
