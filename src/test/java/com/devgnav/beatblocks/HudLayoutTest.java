@@ -28,6 +28,8 @@ public class HudLayoutTest {
 
         int w = Math.max(96, Math.min((int) Math.round(BASE_WIDTH * hudScale), Math.max(96, screenW - 4)));
         int h = Math.max(24, Math.min((int) Math.round(BASE_HEIGHT * hudScale), Math.max(24, screenH / 4)));
+        int minHeight = Math.max(32, (int) Math.round(36 * hudScale));
+        h = Math.min(Math.max(h, minHeight), Math.max(24, screenH / 4));
         int p = Math.max(2, Math.min((int) Math.round(BASE_PADDING * hudScale), 10));
 
         return new int[]{w, h, p};
@@ -66,6 +68,14 @@ public class HudLayoutTest {
 
         assertTrue(large[0] > normal[0], "1.5x multiplier should increase width");
         assertTrue(small[0] < normal[0], "0.7x multiplier should decrease width");
+    }
+
+    @Test
+    void testLowScale_fitsTrackAndArtist() {
+        int[] at70 = computeHud(960, 540, 0.7);
+        assertTrue(at70[1] >= 32, "HUD height at 0.7x must fit two text lines");
+        int[] at35 = computeHud(960, 540, 0.35);
+        assertTrue(at35[1] >= 32, "HUD height at 0.35x must fit two text lines");
     }
 
     @Test

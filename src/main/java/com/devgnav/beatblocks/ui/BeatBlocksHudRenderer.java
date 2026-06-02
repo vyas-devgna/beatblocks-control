@@ -72,10 +72,13 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         int screenW = client.getWindow().getScaledWidth();
         int screenH = client.getWindow().getScaledHeight();
         double hudScale = Math.max(HUD_SCALE_MIN, Math.min(HUD_SCALE_MAX, config.hudScaleMultiplier));
-        float textScale = (float) Math.max(0.62, Math.min(0.92, 0.62 + hudScale * 0.20));
+        float textScale = (float) Math.max(0.50, Math.min(0.92, 0.50 + hudScale * 0.28));
 
         int w = Math.max(96, Math.min((int) Math.round(BASE_WIDTH * hudScale), Math.max(96, screenW - 4)));
         int h = Math.max(24, Math.min((int) Math.round(BASE_HEIGHT * hudScale), Math.max(24, screenH / 4)));
+        // Keep room for track + artist above the progress bar (fixes missing artist below ~70% scale)
+        int minHeight = Math.max(32, (int) Math.round(36 * hudScale));
+        h = Math.min(Math.max(h, minHeight), Math.max(24, screenH / 4));
         int p = Math.max(2, Math.min((int) Math.round(BASE_PADDING * hudScale), 10));
         int margin = Math.max(0, Math.min(config.hudMargin, 32));
 
@@ -105,24 +108,28 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
             renderCoverPlaceholder(context, x + p, y + p, coverSize);
         }
 
-        // Text area (fills remaining space)
-        int textX = x + p + coverSize + 5;
-        int maxTextWidth = Math.max(20, (int) ((w - coverSize - 2 * p - 9) / textScale));
+        // Text area (fills remaining space to the right of cover art)
+        int textGap = Math.max(4, (int) Math.round(5 * hudScale));
+        int textX = x + p + coverSize + textGap;
+        int textAreaWidth = Math.max(24, w - coverSize - 2 * p - textGap);
 
-        String trackName = trimToWidth(track != null ? track.name() : "HUD Size Preview", maxTextWidth, textRenderer);
-        String artistName = trimToWidth(track != null ? track.subtitle() : "BeatBlocks", maxTextWidth, textRenderer);
+        String trackName = trimToScaledWidth(
+                track != null ? track.name() : "HUD Size Preview", textAreaWidth, textRenderer, textScale);
+        String artistName = trimToScaledWidth(
+                track != null ? track.subtitle() : "BeatBlocks", textAreaWidth, textRenderer, textScale);
 
-        int textY1 = y + p + Math.max(1, (int) Math.round(3 * hudScale));
-        int textY2 = textY1 + Math.max(8, (int) Math.round(12 * textScale));
+        int lineStep = Math.max(7, (int) Math.round(10 * textScale));
+        int textY1 = y + p + 1;
+        int textY2 = textY1 + lineStep;
+        int barY = y + h - 2;
 
         DrawMatrixCompat.drawScaledText(context, textRenderer, Text.literal(trackName), textX, textY1, TEXT_MAIN, textScale);
-        if (h >= 30) {
+        if (textY2 + lineStep <= barY) {
             DrawMatrixCompat.drawScaledText(context, textRenderer, Text.literal(artistName), textX, textY2, TEXT_DIM, textScale);
         }
 
         // Subtle full-width bottom progress line
         int barX = x;
-        int barY = y + h - 2;
         int barW = w;
         int durationMs = track != null ? track.durationMs() : 100_000;
         if (barW > 10 && durationMs > 0) {
@@ -182,15 +189,20 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         context.fill(x + w - 1, y, x + w, y + h, 0xFF141414);
     }
 
-    private static String trimToWidth(String value, int maxWidth, TextRenderer textRenderer) {
-        if (value == null) return "";
-        if (textRenderer.getWidth(value) <= maxWidth) return value;
+    /** Trims using on-screen pixel width after {@link DrawMatrixCompat} scale is applied. */
+    private static String trimToScaledWidth(String value, int maxVisualWidth, TextRenderer textRenderer, float scale) {
+        if (value == null || value.isBlank()) return "";
+        if (scaledWidth(textRenderer, value, scale) <= maxVisualWidth) return value;
         String dots = "…";
-        int dotsWidth = textRenderer.getWidth(dots);
-        while (value.length() > 0 && textRenderer.getWidth(value) + dotsWidth > maxWidth) {
+        int dotsVisual = scaledWidth(textRenderer, dots, scale);
+        while (value.length() > 0 && scaledWidth(textRenderer, value, scale) + dotsVisual > maxVisualWidth) {
             value = value.substring(0, value.length() - 1);
         }
-        return value + dots;
+        return value.isEmpty() ? dots : value + dots;
+    }
+
+    private static int scaledWidth(TextRenderer textRenderer, String text, float scale) {
+        return Math.max(1, Math.round(textRenderer.getWidth(text) * scale));
     }
 
 }
