@@ -279,6 +279,13 @@
         normalized.name = firstValue(item.metadata?.title, normalized.name);
         normalized.subtitle = firstValue(item.metadata?.artist_name, normalized.subtitle);
         normalized.duration_ms = Number(Spicetify.Player.data?.duration || item.duration_ms || item.durationMs || normalized.duration_ms || 0);
+        normalized.image_url = firstValue(
+            normalized.image_url,
+            imageFrom(item),
+            imageFrom(item.metadata),
+            imageFrom(Spicetify.Player.data?.item),
+            imageFrom(Spicetify.Player.data?.item?.metadata)
+        );
         return normalized;
     }
 

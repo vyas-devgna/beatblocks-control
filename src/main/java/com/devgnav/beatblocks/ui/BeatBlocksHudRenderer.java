@@ -2,7 +2,7 @@ package com.devgnav.beatblocks.ui;
 
 import com.devgnav.beatblocks.BeatBlocksServices;
 import com.devgnav.beatblocks.config.BeatBlocksConfig;
-import com.devgnav.beatblocks.image.PixelCover;
+
 import com.devgnav.beatblocks.model.PlaybackState;
 import com.devgnav.beatblocks.model.BeatBlocksItem;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -26,7 +26,7 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
 
     private final BeatBlocksServices services;
     private String loadedCoverUrl = null;
-    private PixelCover currentCover = null;
+    private byte[] currentCoverPng = null;
     private String lastTrackId = "";
 
     public BeatBlocksHudRenderer(BeatBlocksServices services) {
@@ -101,8 +101,8 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         int coverX = x + p;
         int coverY = innerTop + Math.max(0, (innerBottom - innerTop - coverSize) / 2);
 
-        if (currentCover != null) {
-            renderPixelCover(context, currentCover, coverX, coverY, coverSize);
+        if (currentCoverPng != null) {
+            renderPixelCover(context, currentCoverPng, coverX, coverY, coverSize);
         } else {
             renderCoverPlaceholder(context, coverX, coverY, coverSize);
         }
@@ -143,18 +143,18 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
     private void loadCoverIfNeeded(String url) {
         if (url == null || url.isBlank()) {
             loadedCoverUrl = null;
-            currentCover = null;
+            currentCoverPng = null;
             return;
         }
         if (url.equals(loadedCoverUrl)) return;
         loadedCoverUrl = url;
-        currentCover = null;
-        services.imageCache().getCover(url).thenAccept(cover -> {
+        currentCoverPng = null;
+        services.imageCache().getCoverPngBytes(url).thenAccept(png -> {
             MinecraftClient client = MinecraftClient.getInstance();
             if (client == null) return;
             client.execute(() -> {
                 if (url.equals(loadedCoverUrl)) {
-                    currentCover = cover;
+                    currentCoverPng = png;
                 }
             });
         });
@@ -170,11 +170,11 @@ public final class BeatBlocksHudRenderer implements HudRenderCallback {
         return Math.max(0, progress);
     }
 
-    private void renderPixelCover(DrawContext context, PixelCover cover, int x, int y, int size) {
+    private void renderPixelCover(DrawContext context, byte[] png, int x, int y, int size) {
         context.fill(x - 1, y - 1, x + size + 1, y + size + 1, 0xFF000000);
-        net.minecraft.util.Identifier textureId = com.devgnav.beatblocks.image.CoverTextureManager.getOrCreateTexture(loadedCoverUrl, cover);
+        net.minecraft.util.Identifier textureId = com.devgnav.beatblocks.image.CoverTextureManager.getOrCreateTexture(loadedCoverUrl, png);
         if (textureId != null) {
-            GuiDrawCompat.drawTexture(context, textureId, x, y, size, size, cover.width(), cover.height());
+            GuiDrawCompat.drawTexture(context, textureId, x, y, size, size, size, size);
         } else {
             renderCoverPlaceholder(context, x, y, size);
         }

@@ -365,13 +365,17 @@ public final class BeatBlocksApiClient implements AutoCloseable {
                             JsonObject trackJson = stateJson.getAsJsonObject("track");
                             String uri = string(trackJson, "uri", "");
                             String id = string(trackJson, "id", idFromUri(uri));
+                            String coverUrl = string(trackJson, "image_url", null);
+                            if (coverUrl == null || coverUrl.isBlank()) {
+                                coverUrl = imageUrl(trackJson);
+                            }
                             track = new BeatBlocksItem(
                                     BeatBlocksItemType.TRACK,
                                     id,
                                     string(trackJson, "name", "Unknown track"),
                                     string(trackJson, "subtitle", string(trackJson, "artists", "Unknown artist")),
                                     uri,
-                                    string(trackJson, "image_url", null),
+                                    coverUrl,
                                     string(trackJson, "external_url", id.isBlank() ? null : "https://open.spotify.com/track/" + id),
                                     integer(trackJson, "duration_ms", 0)
                             );

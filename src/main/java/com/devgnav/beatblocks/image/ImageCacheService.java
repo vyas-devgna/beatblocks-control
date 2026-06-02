@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -27,7 +28,7 @@ public final class ImageCacheService implements AutoCloseable {
     private final int pixelSize;
     private final ExecutorService executor;
     private final HttpClient httpClient;
-    private final Map<String, CompletableFuture<PixelCover>> memory;
+    private final Map<String, CompletableFuture<byte[]>> memory;
 
     public ImageCacheService(Path cacheDir, int pixelSize, int maxEntries, ExecutorService executor) {
         this.cacheDir = cacheDir;
@@ -39,35 +40,54 @@ public final class ImageCacheService implements AutoCloseable {
                 .build();
         this.memory = Collections.synchronizedMap(new LinkedHashMap<>(64, 0.75f, true) {
             @Override
-            protected boolean removeEldestEntry(Map.Entry<String, CompletableFuture<PixelCover>> eldest) {
+            protected boolean removeEldestEntry(Map.Entry<String, CompletableFuture<byte[]>> eldest) {
                 return size() > maxEntries;
             }
         });
     }
 
-    public CompletableFuture<PixelCover> getCover(String url) {
+    public CompletableFuture<byte[]> getCoverPngBytes(String url) {
         if (url == null || url.isBlank()) {
             return CompletableFuture.completedFuture(null);
         }
         synchronized (memory) {
-            CompletableFuture<PixelCover> existing = memory.get(url);
-            if (existing != null) return existing;
-            CompletableFuture<PixelCover> created = CompletableFuture.supplyAsync(() -> loadOrDownload(url), executor);
+            CompletableFuture<byte[]> existing = memory.get(url);
+            if (existing != null) {
+                return existing;
+            }
+            CompletableFuture<byte[]> created = CompletableFuture.supplyAsync(() -> loadOrDownloadPng(url), executor);
             memory.put(url, created);
             return created;
         }
     }
 
-    private PixelCover loadOrDownload(String url) {
+    /** @deprecated Prefer {@link #getCoverPngBytes(String)} for GPU upload. */
+    public CompletableFuture<PixelCover> getCover(String url) {
+        return getCoverPngBytes(url).thenApply(png -> {
+            if (png == null) {
+                return null;
+            }
+            try {
+                BufferedImage image = ImageIO.read(new ByteArrayInputStream(png));
+                return readPixelCover(image);
+            } catch (IOException e) {
+                return null;
+            }
+        });
+    }
+
+    private byte[] loadOrDownloadPng(String url) {
         try {
             Files.createDirectories(cacheDir);
             Path cached = cacheDir.resolve(sha256(url) + "-smooth-" + pixelSize + ".png");
             if (Files.exists(cached)) {
-                return readPixelCover(ImageIO.read(cached.toFile()));
+                return Files.readAllBytes(cached);
             }
 
             HttpRequest request = HttpRequest.newBuilder(URI.create(url))
                     .timeout(Duration.ofSeconds(12))
+                    .header("User-Agent", "BeatBlocks/1.0 (Minecraft Fabric Mod)")
+                    .header("Accept", "image/*")
                     .GET()
                     .build();
             HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
@@ -75,12 +95,17 @@ public final class ImageCacheService implements AutoCloseable {
                 throw new IOException("Cover download HTTP " + response.statusCode());
             }
             BufferedImage original = ImageIO.read(new ByteArrayInputStream(response.body()));
-            if (original == null) throw new IOException("Unsupported image format");
+            if (original == null) {
+                throw new IOException("Unsupported image format");
+            }
             BufferedImage resized = resizeSmooth(original);
-            ImageIO.write(resized, "png", cached.toFile());
-            return readPixelCover(resized);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(resized, "png", out);
+            byte[] png = out.toByteArray();
+            Files.write(cached, png);
+            return png;
         } catch (Exception e) {
-            BeatBlocksClient.LOGGER.debug("Could not load BeatBlocks cover {}", url, e);
+            BeatBlocksClient.LOGGER.warn("Could not load BeatBlocks cover from {}", url, e);
             return null;
         }
     }
@@ -97,7 +122,9 @@ public final class ImageCacheService implements AutoCloseable {
     }
 
     private static PixelCover readPixelCover(BufferedImage image) {
-        if (image == null) return null;
+        if (image == null) {
+            return null;
+        }
         int width = image.getWidth();
         int height = image.getHeight();
         int[] pixels = new int[width * height];
@@ -109,7 +136,9 @@ public final class ImageCacheService implements AutoCloseable {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(value.getBytes(java.nio.charset.StandardCharsets.UTF_8));
         StringBuilder builder = new StringBuilder(hash.length * 2);
-        for (byte b : hash) builder.append(String.format("%02x", b));
+        for (byte b : hash) {
+            builder.append(String.format("%02x", b));
+        }
         return builder.toString();
     }
 

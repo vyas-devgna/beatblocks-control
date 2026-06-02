@@ -1,6 +1,6 @@
 package com.devgnav.beatblocks.image;
 
-import com.devgnav.beatblocks.compat.IdentifierCompat;
+import com.devgnav.beatblocks.BeatBlocksClient;
 import com.devgnav.beatblocks.compat.TextureFilterCompat;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
@@ -28,8 +28,8 @@ public final class CoverTextureManager {
         }
     };
 
-    public static Identifier getOrCreateTexture(String key, PixelCover cover) {
-        if (key == null || key.isBlank() || cover == null) {
+    public static Identifier getOrCreateTexture(String key, byte[] pngBytes) {
+        if (key == null || key.isBlank() || pngBytes == null || pngBytes.length == 0) {
             return null;
         }
         MinecraftClient client = MinecraftClient.getInstance();
@@ -42,41 +42,34 @@ public final class CoverTextureManager {
             if (existing != null) {
                 return existing;
             }
+        }
 
-            try {
-                int w = cover.width();
-                int h = cover.height();
-                NativeImage image = new NativeImage(NativeImage.Format.RGBA, w, h, false);
-                for (int y = 0; y < h; y++) {
-                    for (int x = 0; x < w; x++) {
-                        NativeImageCompat.writePixel(image, x, y, cover.colorAt(x, y));
-                    }
+        if (!client.isOnThread()) {
+            client.execute(() -> getOrCreateTexture(key, pngBytes));
+            synchronized (TEXTURE_CACHE) {
+                return TEXTURE_CACHE.get(key);
+            }
+        }
+
+        try {
+            NativeImage image = NativeImageCompat.readRgbaPng(pngBytes);
+            NativeImageBackedTexture texture = NativeImageCompat.createTexture(image);
+            String safeKey = UUID.nameUUIDFromBytes(key.getBytes(StandardCharsets.UTF_8)).toString().replace("-", "");
+            Identifier id = Identifier.of("beatblocks", "cover_" + safeKey);
+
+            synchronized (TEXTURE_CACHE) {
+                if (TEXTURE_CACHE.containsKey(key)) {
+                    return TEXTURE_CACHE.get(key);
                 }
-
-                NativeImageBackedTexture texture = NativeImageCompat.createTexture(image);
-                String safeKey = UUID.nameUUIDFromBytes(key.getBytes(StandardCharsets.UTF_8)).toString().replace("-", "");
-                Identifier id = IdentifierCompat.of("beatblocks", "cover_" + safeKey);
-
-                if (!client.isOnThread()) {
-                    client.execute(() -> registerTexture(client, key, id, texture));
-                    return null;
-                }
-                registerTexture(client, key, id, texture);
+                TextureFilterCompat.setBilinear(texture);
+                client.getTextureManager().registerTexture(id, texture);
+                TEXTURE_CACHE.put(key, id);
                 return id;
-            } catch (Exception e) {
-                return null;
             }
+        } catch (Exception e) {
+            BeatBlocksClient.LOGGER.warn("BeatBlocks could not upload cover texture for {}", key, e);
+            return null;
         }
     }
 
-    private static void registerTexture(MinecraftClient client, String key, Identifier id, NativeImageBackedTexture texture) {
-        synchronized (TEXTURE_CACHE) {
-            if (TEXTURE_CACHE.containsKey(key)) {
-                return;
-            }
-            TextureFilterCompat.setBilinear(texture);
-            client.getTextureManager().registerTexture(id, texture);
-            TEXTURE_CACHE.put(key, id);
-        }
-    }
 }

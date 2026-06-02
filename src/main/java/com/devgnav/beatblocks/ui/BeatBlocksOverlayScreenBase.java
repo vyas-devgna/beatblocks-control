@@ -1,7 +1,7 @@
 package com.devgnav.beatblocks.ui;
 
 import com.devgnav.beatblocks.BeatBlocksServices;
-import com.devgnav.beatblocks.image.PixelCover;
+
 import com.devgnav.beatblocks.model.*;
 import com.devgnav.beatblocks.spotify.BeatBlocksApiException;
 import net.minecraft.client.MinecraftClient;
@@ -90,10 +90,10 @@ public class BeatBlocksOverlayScreenBase extends Screen {
     private long lastPoll = 0L;
     private long lastClickAt = 0L;
     private String loadedCoverUrl = null;
-    private PixelCover currentCover = null;
-    private final Map<String, PixelCover> itemCoverCache = new LinkedHashMap<>(128, 0.75f, true) {
+    private byte[] currentCoverPng = null;
+    private final Map<String, byte[]> itemCoverCache = new LinkedHashMap<>(128, 0.75f, true) {
         @Override
-        protected boolean removeEldestEntry(Map.Entry<String, PixelCover> eldest) {
+        protected boolean removeEldestEntry(Map.Entry<String, byte[]> eldest) {
             return size() > 256;
         }
     };
@@ -267,8 +267,8 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         int coverX = x + (halfW - coverSize) / 2;
         int coverY = y + 16;
 
-        if (currentCover != null) {
-            renderPixelCover(ctx, currentCover, coverX, coverY, coverSize);
+        if (currentCoverPng != null) {
+            renderPixelCover(ctx, currentCoverPng, coverX, coverY, coverSize);
         } else {
             renderCoverPlaceholder(ctx, coverX, coverY, coverSize);
         }
@@ -530,8 +530,8 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         if (track != null) {
             // Mini cover
             int miniCoverSize = PLAYER_BAR_H - 12;
-            if (currentCover != null) {
-                renderPixelCover(ctx, currentCover, lx, ly, miniCoverSize);
+            if (currentCoverPng != null) {
+                renderPixelCover(ctx, currentCoverPng, lx, ly, miniCoverSize);
             } else {
                 ctx.fill(lx, ly, lx + miniCoverSize, ly + miniCoverSize, 0xFF141414);
             }
@@ -1119,14 +1119,14 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         String url = track == null ? null : track.imageUrl();
         if (url == null || url.isBlank()) {
             loadedCoverUrl = null;
-            currentCover = null;
+            currentCoverPng = null;
             return;
         }
         if (url.equals(loadedCoverUrl)) return;
         loadedCoverUrl = url;
-        currentCover = null;
-        services.imageCache().getCover(url).thenAccept(cover -> runOnClient(() -> {
-            if (url.equals(loadedCoverUrl)) currentCover = cover;
+        currentCoverPng = null;
+        services.imageCache().getCoverPngBytes(url).thenAccept(png -> runOnClient(() -> {
+            if (url.equals(loadedCoverUrl)) currentCoverPng = png;
         }));
     }
 
@@ -1218,28 +1218,28 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         ctx.fill(x + w - 1, y, x + w, y + h, sh);
     }
 
-    private void renderPixelCover(DrawContext ctx, PixelCover cover, int x, int y, int size) {
-        renderCover(ctx, loadedCoverUrl, cover, x, y, size);
+    private void renderPixelCover(DrawContext ctx, byte[] png, int x, int y, int size) {
+        renderCover(ctx, loadedCoverUrl, png, x, y, size);
     }
 
     private void renderItemCover(DrawContext ctx, BeatBlocksItem item, int x, int y, int size) {
         String url = item == null ? null : item.imageUrl();
-        PixelCover cover = coverForItem(url);
-        if (cover != null) {
-            renderCover(ctx, url, cover, x, y, size);
+        byte[] png = coverPngForItem(url);
+        if (png != null) {
+            renderCover(ctx, url, png, x, y, size);
         } else {
             renderCoverPlaceholder(ctx, x, y, size);
         }
     }
 
-    private PixelCover coverForItem(String url) {
+    private byte[] coverPngForItem(String url) {
         if (url == null || url.isBlank()) return null;
-        PixelCover cached = itemCoverCache.get(url);
+        byte[] cached = itemCoverCache.get(url);
         if (cached != null) return cached;
         if (itemCoverLoading.add(url)) {
-            services.imageCache().getCover(url).thenAccept(cover -> runOnClient(() -> {
+            services.imageCache().getCoverPngBytes(url).thenAccept(png -> runOnClient(() -> {
                 itemCoverLoading.remove(url);
-                if (cover != null) itemCoverCache.put(url, cover);
+                if (png != null) itemCoverCache.put(url, png);
             })).exceptionally(err -> {
                 runOnClient(() -> itemCoverLoading.remove(url));
                 return null;
@@ -1248,15 +1248,15 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         return null;
     }
 
-    private void renderCover(DrawContext ctx, String key, PixelCover cover, int x, int y, int size) {
+    private void renderCover(DrawContext ctx, String key, byte[] png, int x, int y, int size) {
         ctx.fill(x - 1, y - 1, x + size + 1, y + size + 1, 0xFF000000);
-        if (key == null || key.isBlank()) {
+        if (key == null || key.isBlank() || png == null) {
             renderCoverPlaceholder(ctx, x, y, size);
             return;
         }
-        net.minecraft.util.Identifier textureId = com.devgnav.beatblocks.image.CoverTextureManager.getOrCreateTexture(key, cover);
+        net.minecraft.util.Identifier textureId = com.devgnav.beatblocks.image.CoverTextureManager.getOrCreateTexture(key, png);
         if (textureId != null) {
-            GuiDrawCompat.drawTexture(ctx, textureId, x, y, size, size, cover.width(), cover.height());
+            GuiDrawCompat.drawTexture(ctx, textureId, x, y, size, size, size, size);
         } else {
             renderCoverPlaceholder(ctx, x, y, size);
         }

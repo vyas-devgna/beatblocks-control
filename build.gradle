@@ -29,6 +29,16 @@ def drawApiKind(String mc) {
 
 sourceSets.main.java.srcDir "src/draw-${drawApiKind(project.minecraft_version)}/java"
 
+def imageApiKind(String mc) {
+    def parts = mc.split('\\.')
+    if (parts.length < 3) return 'legacy'
+    int minor = parts[1].toInteger()
+    int patch = parts[2].toInteger()
+    return minor > 21 || (minor == 21 && patch >= 5) ? 'modern' : 'legacy'
+}
+
+sourceSets.main.java.srcDir "src/image-${imageApiKind(project.minecraft_version)}/java"
+
 version = project.mod_version
 group = project.maven_group
 base { archivesName = project.archives_base_name }
