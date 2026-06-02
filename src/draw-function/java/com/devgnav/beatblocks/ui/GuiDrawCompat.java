@@ -11,6 +11,12 @@ public final class GuiDrawCompat {
     public static void drawTexture(DrawContext context, Identifier texture, int x, int y, int width, int height, int textureWidth, int textureHeight) {
         try {
             context.drawTexture(RenderLayer::getGuiTextured, texture, x, y, 0f, 0f, width, height, textureWidth, textureHeight);
+            return;
+        } catch (Throwable ignored) {
+        }
+        try {
+            context.drawTexture(RenderLayer::getGuiTextured, texture, x, y, 0f, 0f, width, height, textureWidth, textureHeight, 0xFFFFFFFF);
+            return;
         } catch (Throwable t) {
             drawFallback(context, x, y, width, height);
         }

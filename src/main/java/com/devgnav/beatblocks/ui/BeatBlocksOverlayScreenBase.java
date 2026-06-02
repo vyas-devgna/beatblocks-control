@@ -48,27 +48,27 @@ public class BeatBlocksOverlayScreenBase extends Screen {
     private static final int ROW_H = 28;
     private static final int ROW_COVER = 22;
     private static final int CONTEXT_HEADER_H = 78;
-    private static final int ICON_TEXTURE_SIZE = 64;
-    private static final int PLAYER_ICON = 16;
+    private static final int ICON_BUTTON_SIZE = 18;
+    private static final int ICON_PLAY_BUTTON_SIZE = 24;
 
-    private static final Identifier ICON_NOW = icon("beatblocks_icon_now_playing");
-    private static final Identifier ICON_PLAYLIST = icon("beatblocks_icon_playlist");
-    private static final Identifier ICON_LIKED = icon("beatblocks_icon_liked_songs");
-    private static final Identifier ICON_ALBUM = icon("beatblocks_icon_album");
-    private static final Identifier ICON_QUEUE = icon("beatblocks_icon_queue");
-    private static final Identifier ICON_DIAGNOSTICS = icon("beatblocks_icon_diagnostics");
-    private static final Identifier ICON_SETTINGS = icon("beatblocks_icon_settings");
-    private static final Identifier ICON_PLAY = icon("beatblocks_icon_play");
-    private static final Identifier ICON_PAUSE = icon("beatblocks_icon_pause");
-    private static final Identifier ICON_PREVIOUS = icon("beatblocks_icon_previous");
-    private static final Identifier ICON_NEXT = icon("beatblocks_icon_next");
-    private static final Identifier ICON_SHUFFLE = icon("beatblocks_icon_shuffle");
-    private static final Identifier ICON_REPEAT = icon("beatblocks_icon_repeat");
-    private static final Identifier ICON_REPEAT_ONE = icon("beatblocks_icon_repeat_one");
-    private static final Identifier ICON_VOLUME = icon("beatblocks_icon_volume");
-    private static final Identifier ICON_VOLUME_LOW = icon("beatblocks_icon_volume_low");
-    private static final Identifier ICON_VOLUME_MUTED = icon("beatblocks_icon_volume_muted");
-    private static final Identifier ICON_HEART = icon("beatblocks_icon_heart");
+    private static final String ICON_NOW = "beatblocks_icon_now_playing";
+    private static final String ICON_PLAYLIST = "beatblocks_icon_playlist";
+    private static final String ICON_LIKED = "beatblocks_icon_liked_songs";
+    private static final String ICON_ALBUM = "beatblocks_icon_album";
+    private static final String ICON_QUEUE = "beatblocks_icon_queue";
+    private static final String ICON_DIAGNOSTICS = "beatblocks_icon_diagnostics";
+    private static final String ICON_SETTINGS = "beatblocks_icon_settings";
+    private static final String ICON_PLAY = "beatblocks_icon_play";
+    private static final String ICON_PAUSE = "beatblocks_icon_pause";
+    private static final String ICON_PREVIOUS = "beatblocks_icon_previous";
+    private static final String ICON_NEXT = "beatblocks_icon_next";
+    private static final String ICON_SHUFFLE = "beatblocks_icon_shuffle";
+    private static final String ICON_REPEAT = "beatblocks_icon_repeat";
+    private static final String ICON_REPEAT_ONE = "beatblocks_icon_repeat_one";
+    private static final String ICON_VOLUME = "beatblocks_icon_volume";
+    private static final String ICON_VOLUME_LOW = "beatblocks_icon_volume_low";
+    private static final String ICON_VOLUME_MUTED = "beatblocks_icon_volume_muted";
+    private static final String ICON_HEART = "beatblocks_icon_heart";
 
     private final BeatBlocksServices services;
 
@@ -131,6 +131,7 @@ public class BeatBlocksOverlayScreenBase extends Screen {
 
     @Override
     protected void init() {
+        com.devgnav.beatblocks.image.GuiIconRegistry.preloadAll();
         refreshAll();
     }
 
@@ -211,7 +212,7 @@ public class BeatBlocksOverlayScreenBase extends Screen {
 
         Tab[] navTabs = { Tab.NOW, Tab.PLAYLISTS, Tab.LIKED, Tab.ALBUMS, Tab.QUEUE, Tab.DIAGNOSTICS, Tab.SETTINGS };
         String[] navLabels = { "Now Playing", "Playlists", "Liked Songs", "Albums", "Queue", "Diagnostics", "Settings" };
-        Identifier[] navIcons = { ICON_NOW, ICON_PLAYLIST, ICON_LIKED, ICON_ALBUM, ICON_QUEUE, ICON_DIAGNOSTICS, ICON_SETTINGS };
+        String[] navIcons = { ICON_NOW, ICON_PLAYLIST, ICON_LIKED, ICON_ALBUM, ICON_QUEUE, ICON_DIAGNOSTICS, ICON_SETTINGS };
 
         int itemY = sy;
         for (int i = 0; i < navTabs.length; i++) {
@@ -225,9 +226,9 @@ public class BeatBlocksOverlayScreenBase extends Screen {
                 ctx.fill(sx + 4, itemY, sx + sw - 4, itemY + 15, HOVER_BG);
             }
 
-            drawIcon(ctx, navIcons[i], sx + 12, itemY + 3, 10);
-            ctx.drawTextWithShadow(textRenderer, Text.literal(navLabels[i]), sx + 26, itemY + 4, active ? TEXT_MAIN : TEXT_DIM);
-            itemY += 17;
+            drawIcon(ctx, navIcons[i], sx + 10, itemY + 2, com.devgnav.beatblocks.image.GuiIconRegistry.DISPLAY_SIZE);
+            ctx.drawTextWithShadow(textRenderer, Text.literal(navLabels[i]), sx + 28, itemY + 5, active ? TEXT_MAIN : TEXT_DIM);
+            itemY += 18;
         }
     }
 
@@ -551,13 +552,13 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         boolean compactControls = controlsRight - controlsLeft < 170;
         boolean tinyControls = controlsRight - controlsLeft < 138;
 
-        shuffleX = compactControls ? 0 : centerX - 80; shuffleY = buttonY + 2; shuffleW = compactControls ? 0 : 18; shuffleH = compactControls ? 0 : 18;
-        prevX = centerX - 52; prevY = buttonY + 2; prevW = 18; prevH = 18;
-        playX = centerX - 13; playY = buttonY; playW = 24; playH = 24;
-        nextX = centerX + 28; nextY = buttonY + 2; nextW = 18; nextH = 18;
-        repeatX = compactControls ? 0 : centerX + 58; repeatY = buttonY + 2; repeatW = compactControls ? 0 : 18; repeatH = compactControls ? 0 : 18;
-        heartX = tinyControls ? 0 : controlsRight - 46; heartY = buttonY + 2; heartW = tinyControls ? 0 : 18; heartH = tinyControls ? 0 : 18;
-        queueButtonX = tinyControls ? 0 : controlsRight - 20; queueButtonY = buttonY + 2; queueButtonW = tinyControls ? 0 : 18; queueButtonH = tinyControls ? 0 : 18;
+        shuffleX = compactControls ? 0 : centerX - 80; shuffleY = buttonY + 2; shuffleW = compactControls ? 0 : ICON_BUTTON_SIZE; shuffleH = compactControls ? 0 : ICON_BUTTON_SIZE;
+        prevX = centerX - 52; prevY = buttonY + 2; prevW = ICON_BUTTON_SIZE; prevH = ICON_BUTTON_SIZE;
+        playX = centerX - 12; playY = buttonY; playW = ICON_PLAY_BUTTON_SIZE; playH = ICON_PLAY_BUTTON_SIZE;
+        nextX = centerX + 28; nextY = buttonY + 2; nextW = ICON_BUTTON_SIZE; nextH = ICON_BUTTON_SIZE;
+        repeatX = compactControls ? 0 : centerX + 58; repeatY = buttonY + 2; repeatW = compactControls ? 0 : ICON_BUTTON_SIZE; repeatH = compactControls ? 0 : ICON_BUTTON_SIZE;
+        heartX = tinyControls ? 0 : controlsRight - 46; heartY = buttonY + 2; heartW = tinyControls ? 0 : ICON_BUTTON_SIZE; heartH = tinyControls ? 0 : ICON_BUTTON_SIZE;
+        queueButtonX = tinyControls ? 0 : controlsRight - 20; queueButtonY = buttonY + 2; queueButtonW = tinyControls ? 0 : ICON_BUTTON_SIZE; queueButtonH = tinyControls ? 0 : ICON_BUTTON_SIZE;
 
         drawIconButton(ctx, ICON_SHUFFLE, shuffleX, shuffleY, shuffleW, shuffleH, mx, my, playback.shuffle());
         drawIconButton(ctx, ICON_PREVIOUS, prevX, prevY, prevW, prevH, mx, my, false);
@@ -572,9 +573,9 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         int rx = barX + barW - rightReserved;
         volumeIconX = rx;
         volumeIconY = barY + 13;
-        volumeIconW = 18;
-        volumeIconH = 18;
-        Identifier volumeIcon = shownVolume == 0 ? ICON_VOLUME_MUTED : shownVolume < 45 ? ICON_VOLUME_LOW : ICON_VOLUME;
+        volumeIconW = ICON_BUTTON_SIZE;
+        volumeIconH = ICON_BUTTON_SIZE;
+        String volumeIcon = shownVolume == 0 ? ICON_VOLUME_MUTED : shownVolume < 45 ? ICON_VOLUME_LOW : ICON_VOLUME;
         drawIconButton(ctx, volumeIcon, volumeIconX, volumeIconY, volumeIconW, volumeIconH, mx, my, shownVolume == 0);
 
         volumeSliderX = rx + 24;
@@ -1315,22 +1316,20 @@ public class BeatBlocksOverlayScreenBase extends Screen {
         sendVolume(volumeDragValue, true);
     }
 
-    private void drawIconButton(DrawContext ctx, Identifier icon, int x, int y, int w, int h, int mx, int my, boolean active) {
+    private void drawIconButton(DrawContext ctx, String icon, int x, int y, int w, int h, int mx, int my, boolean active) {
         if (w <= 0 || h <= 0) return;
         boolean hovered = hit(mx, my, x, y, w, h);
         int bg = active ? ACTIVE_BG : hovered ? HOVER_BG : 0x00000000;
         if (bg != 0) ctx.fill(x - 2, y - 2, x + w + 2, y + h + 2, bg);
         if (active) ctx.fill(x - 2, y + h + 1, x + w + 2, y + h + 2, ACCENT);
-        int iconSize = Math.max(8, Math.min(w, h) - 2);
+        int iconSize = com.devgnav.beatblocks.image.GuiIconRegistry.DISPLAY_SIZE;
         drawIcon(ctx, icon, x + (w - iconSize) / 2, y + (h - iconSize) / 2, iconSize);
     }
 
-    private static void drawIcon(DrawContext ctx, Identifier icon, int x, int y, int size) {
-        GuiDrawCompat.drawTexture(ctx, icon, x, y, size, size, ICON_TEXTURE_SIZE, ICON_TEXTURE_SIZE);
-    }
-
-    private static Identifier icon(String name) {
-        return Identifier.of("beatblocks", "textures/gui/icons/" + name);
+    private static void drawIcon(DrawContext ctx, String iconName, int x, int y, int size) {
+        net.minecraft.util.Identifier texture = com.devgnav.beatblocks.image.GuiIconRegistry.resolve(iconName);
+        if (texture == null) return;
+        GuiDrawCompat.drawTexture(ctx, texture, x, y, size, size, com.devgnav.beatblocks.image.GuiIconRegistry.SOURCE_SIZE, com.devgnav.beatblocks.image.GuiIconRegistry.SOURCE_SIZE);
     }
 
     private static boolean hit(double mx, double my, int x, int y, int w, int h) {
