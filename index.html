@@ -8,23 +8,23 @@
   <link rel="icon" href="docs/logo.jpg" type="image/jpeg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0c0a12;
-      --bg-elevated: #14101f;
-      --panel: #1a1528;
-      --border: #2e2644;
-      --text: #f4f0ff;
-      --muted: #a89bc4;
+      --bg: #08060e;
+      --panel: #151020;
+      --panel-hover: #1c1630;
+      --border: #322a4a;
+      --text: #f8f4ff;
+      --muted: #b0a3cc;
       --accent: #1ed760;
-      --accent-dim: #158c3f;
+      --accent-glow: rgba(30, 215, 96, 0.45);
       --purple: #9b5de5;
       --pink: #f15bb5;
       --gold: #fee440;
-      --orange: #ff9f1c;
-      --radius: 14px;
-      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --sponsor: #ea4aaa;
+      --radius: 16px;
+      --radius-lg: 22px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -32,319 +32,482 @@
       font-family: "Outfit", system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.65;
+      line-height: 1.6;
       min-height: 100vh;
+      overflow-x: hidden;
     }
-    .ambient {
+
+    /* Animated background */
+    .bg-layer {
       position: fixed;
       inset: 0;
-      pointer-events: none;
       z-index: 0;
-      background:
-        radial-gradient(ellipse 70% 45% at 50% -5%, rgba(155, 93, 229, 0.22), transparent 55%),
-        radial-gradient(ellipse 50% 35% at 0% 60%, rgba(241, 91, 181, 0.1), transparent),
-        radial-gradient(ellipse 45% 30% at 100% 70%, rgba(30, 215, 96, 0.08), transparent);
+      pointer-events: none;
+      overflow: hidden;
     }
+    .bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    .bg-orb-1 {
+      width: 55vw; height: 55vw; max-width: 520px; max-height: 520px;
+      background: rgba(155, 93, 229, 0.35);
+      top: -12%; left: -8%;
+    }
+    .bg-orb-2 {
+      width: 45vw; height: 45vw; max-width: 420px; max-height: 420px;
+      background: rgba(30, 215, 96, 0.2);
+      bottom: 5%; right: -6%;
+      animation-delay: -6s;
+    }
+    .bg-orb-3 {
+      width: 35vw; height: 35vw; max-width: 320px; max-height: 320px;
+      background: rgba(241, 91, 181, 0.18);
+      top: 45%; left: 40%;
+      animation-delay: -12s;
+    }
+    @keyframes drift {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, -30px) scale(1.08); }
+    }
+
     .page {
       position: relative;
       z-index: 1;
-      max-width: 960px;
+      max-width: 1040px;
       margin: 0 auto;
-      padding: 0 1.25rem 4rem;
+      padding: 0 1.5rem 5rem;
     }
-    .banner-wrap {
-      margin: 0 -1.25rem;
-      border-radius: 0 0 var(--radius) var(--radius);
+
+    /* Banner */
+    .banner-hero {
+      margin: 0 -1.5rem;
+      position: relative;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
       overflow: hidden;
-      box-shadow: var(--shadow);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
     }
-    .banner-wrap img {
+    .banner-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, var(--bg) 0%, transparent 45%);
+      pointer-events: none;
+    }
+    .banner-hero img {
       display: block;
       width: 100%;
       height: auto;
+      animation: banner-in 1s ease-out;
     }
+    @keyframes banner-in {
+      from { opacity: 0; transform: scale(1.03); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Hero with logo */
     .hero {
-      text-align: center;
-      padding: 2.5rem 0 2rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1.75rem 2rem;
+      align-items: center;
+      margin-top: -4.5rem;
+      padding: 0 0.5rem 2.5rem;
+      animation: hero-in 0.9s ease-out 0.15s both;
+    }
+    @keyframes hero-in {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .logo-frame {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .logo-glow {
+      position: absolute;
+      inset: -12px;
+      border-radius: 28px;
+      background: conic-gradient(from 0deg, var(--accent), var(--purple), var(--pink), var(--gold), var(--accent));
+      opacity: 0.55;
+      filter: blur(14px);
+      animation: spin-glow 8s linear infinite;
+    }
+    @keyframes spin-glow {
+      to { transform: rotate(360deg); }
     }
     .hero-logo {
-      width: 96px;
-      height: 96px;
-      border-radius: 18px;
+      position: relative;
+      width: 140px;
+      height: 140px;
+      border-radius: 22px;
       object-fit: cover;
-      margin: -3rem auto 1rem;
-      border: 3px solid var(--border);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      display: block;
+      border: 3px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+      animation: float-logo 4s ease-in-out infinite;
     }
-    .hero h1 {
-      font-size: clamp(2rem, 6vw, 2.75rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
+    @keyframes float-logo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
     }
-    .hero h1 em {
-      font-style: normal;
-      background: linear-gradient(135deg, var(--accent), var(--gold));
+    .hero-text h1 {
+      font-size: clamp(2.25rem, 6vw, 3.25rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+    .hero-text h1 .brand {
+      background: linear-gradient(120deg, var(--accent) 0%, var(--gold) 50%, var(--pink) 100%);
+      background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      animation: shimmer 4s linear infinite;
     }
-    .hero .tagline {
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+    .hero-text .tagline {
       color: var(--muted);
-      font-size: 1.1rem;
-      max-width: 36rem;
-      margin: 0.85rem auto 0;
+      font-size: 1.15rem;
+      margin-top: 0.65rem;
+      max-width: 34rem;
     }
     .badges {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-      justify-content: center;
-      margin-top: 1.25rem;
+      margin-top: 1.1rem;
     }
     .badge {
       font-size: 0.78rem;
       font-weight: 500;
-      padding: 0.35rem 0.8rem;
+      padding: 0.4rem 0.85rem;
       border-radius: 999px;
       border: 1px solid var(--border);
-      background: var(--bg-elevated);
+      background: rgba(21, 16, 32, 0.85);
       color: var(--muted);
+      backdrop-filter: blur(8px);
+      transition: border-color 0.2s, transform 0.2s;
     }
-    .badge strong { color: var(--text); font-weight: 600; }
+    .badge:hover { border-color: var(--purple); transform: translateY(-2px); }
+    .badge strong { color: var(--text); }
+
     .cta-row {
       display: flex;
       flex-wrap: wrap;
       gap: 0.75rem;
-      justify-content: center;
-      margin-top: 1.75rem;
+      margin-top: 1.5rem;
+      grid-column: 1 / -1;
     }
     a.btn {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.8rem 1.4rem;
-      border-radius: 10px;
+      padding: 0.85rem 1.5rem;
+      border-radius: 12px;
       font-weight: 600;
       font-size: 0.95rem;
       text-decoration: none;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    a.btn:hover { transform: translateY(-2px); }
+    a.btn:hover { transform: translateY(-3px) scale(1.02); }
     a.btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+      background: linear-gradient(135deg, var(--accent), #12a34a);
       color: #041208;
-      box-shadow: 0 6px 24px rgba(30, 215, 96, 0.35);
+      box-shadow: 0 8px 28px var(--accent-glow);
+      animation: pulse-cta 2.5s ease-in-out infinite;
     }
+    @keyframes pulse-cta {
+      0%, 100% { box-shadow: 0 8px 28px var(--accent-glow); }
+      50% { box-shadow: 0 8px 40px rgba(30, 215, 96, 0.65); }
+    }
+    a.btn-modrinth { background: #1bd96a; color: #052610; box-shadow: 0 8px 24px rgba(27, 217, 106, 0.35); }
     a.btn-secondary {
       background: var(--panel);
       color: var(--text);
       border: 1px solid var(--border);
     }
-    a.btn-secondary:hover { border-color: var(--purple); }
-    a.btn-modrinth {
-      background: #1bd96a;
-      color: #052610;
-      box-shadow: 0 6px 24px rgba(27, 217, 106, 0.3);
+    a.btn-secondary:hover { border-color: var(--purple); box-shadow: 0 8px 24px rgba(155, 93, 229, 0.2); }
+
+    /* Reveal on scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
     }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1rem;
-      margin: 2.5rem 0;
+      margin: 2rem 0;
     }
     .feature-card {
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1.25rem 1.35rem;
+      padding: 1.4rem 1.5rem;
       text-align: center;
+      transition: transform 0.25s ease, border-color 0.25s, box-shadow 0.25s, background 0.25s;
     }
-    .feature-card .icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
-    .feature-card h3 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 0.35rem;
+    .feature-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--purple);
+      background: var(--panel-hover);
+      box-shadow: 0 16px 40px rgba(155, 93, 229, 0.15);
     }
-    .feature-card p {
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.5;
+    .feature-card .icon {
+      font-size: 2rem;
+      margin-bottom: 0.6rem;
+      display: inline-block;
+      animation: bounce-icon 2s ease-in-out infinite;
     }
+    .feature-card:nth-child(2) .icon { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) .icon { animation-delay: 0.4s; }
+    .feature-card:nth-child(4) .icon { animation-delay: 0.6s; }
+    @keyframes bounce-icon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .feature-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+
     section.block {
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1.5rem 1.75rem;
+      padding: 1.6rem 1.85rem;
       margin-bottom: 1.25rem;
+      transition: border-color 0.3s;
     }
+    section.block:hover { border-color: rgba(155, 93, 229, 0.4); }
     section.block h2 {
-      font-size: 1.15rem;
-      font-weight: 600;
+      font-size: 1.2rem;
+      font-weight: 700;
       margin-bottom: 1rem;
       color: var(--gold);
     }
     section.block p, section.block li { color: var(--muted); font-size: 0.95rem; }
-    section.block ul { padding-left: 1.2rem; margin-top: 0.5rem; }
-    section.block li { margin-bottom: 0.4rem; }
     section.block code {
       font-family: "JetBrains Mono", ui-monospace, monospace;
       font-size: 0.85em;
       color: var(--accent);
       background: var(--bg);
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
+      padding: 0.15rem 0.45rem;
+      border-radius: 5px;
     }
-    .steps { display: grid; gap: 0; margin-top: 0.5rem; }
-    .step {
+    .steps .step {
       display: flex;
       gap: 1rem;
-      align-items: flex-start;
-      padding: 1rem 0;
+      padding: 1.1rem 0;
       border-bottom: 1px solid var(--border);
+      transition: padding-left 0.25s;
     }
-    .step:last-child { border-bottom: none; padding-bottom: 0; }
+    .steps .step:hover { padding-left: 0.35rem; }
+    .steps .step:last-child { border-bottom: none; }
     .step-num {
       flex-shrink: 0;
-      width: 32px;
-      height: 32px;
+      width: 36px; height: 36px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--purple), var(--pink));
       color: #fff;
-      font-size: 0.9rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 4px 16px rgba(241, 91, 181, 0.35);
     }
-    .step strong { color: var(--text); display: block; margin-bottom: 0.25rem; }
-    .versions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 0.75rem;
-    }
+    .step strong { color: var(--text); display: block; margin-bottom: 0.3rem; }
+    .versions { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.85rem; }
     .ver {
-      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-family: "JetBrains Mono", monospace;
       font-size: 0.72rem;
-      padding: 0.28rem 0.55rem;
+      padding: 0.3rem 0.6rem;
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--muted);
-    }
-    .support-panel {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 1.25rem;
-      padding: 1.5rem;
-      background: linear-gradient(135deg, rgba(155, 93, 229, 0.12), rgba(30, 215, 96, 0.08));
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin: 2rem 0;
-      text-align: center;
-    }
-    .support-panel p {
-      flex: 1 1 100%;
-      color: var(--muted);
-      font-size: 0.95rem;
-      max-width: 32rem;
-      margin: 0 auto;
-    }
-    .support-panel .support-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      align-items: center;
-      justify-content: center;
-    }
-    .support-panel a.sponsor-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.65rem 1.2rem;
-      background: #ea4aaa;
-      color: #fff;
       border-radius: 8px;
-      font-weight: 600;
-      text-decoration: none;
-      font-size: 0.9rem;
+      color: var(--muted);
+      transition: color 0.2s, border-color 0.2s;
     }
-    .support-panel a.sponsor-btn:hover { filter: brightness(1.08); }
+    .ver:hover { color: var(--accent); border-color: var(--accent); }
 
-    .roadmap-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
+    /* Support section */
+    #support {
+      margin: 2.5rem 0;
+      padding: 2.25rem 2rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(21, 16, 32, 0.95), rgba(30, 20, 48, 0.9));
+      text-align: center;
+      position: relative;
+      overflow: hidden;
     }
-    .roadmap-table th, .roadmap-table td {
-      text-align: left;
-      padding: 0.6rem 0.5rem;
+    #support::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(234, 74, 170, 0.06), transparent, rgba(30, 215, 96, 0.06), transparent);
+      background-size: 200% 100%;
+      animation: support-shine 6s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes support-shine {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    #support h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      position: relative;
+    }
+    #support .support-desc {
+      color: var(--muted);
+      max-width: 36rem;
+      margin: 0 auto 1.75rem;
+      font-size: 1rem;
+      position: relative;
+    }
+    .support-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: stretch;
+      gap: 2rem;
+      position: relative;
+    }
+    .support-card-wrap {
+      transition: transform 0.25s ease;
+    }
+    .support-card-wrap:hover {
+      transform: translateY(-6px) scale(1.03);
+    }
+    /* Chai4Me — exact embed, scaled via wrapper */
+    .chai-embed a:hover { transform: scale(1.04); }
+    .chai-embed a {
+      transition: transform 0.2s !important;
+    }
+    /* GitHub Sponsors — matching card style */
+    .github-sponsor-card {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      padding: 8px 32px;
+      border-radius: 16px;
+      text-decoration: none;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+      min-height: 88px;
+    }
+    .github-sponsor-card:hover { transform: scale(1.04); }
+    .github-sponsor-card img {
+      height: 32px;
+      object-fit: contain;
+      margin-bottom: 4px;
+    }
+    .github-sponsor-card span {
+      color: #6b7280;
+      font-family: sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .roadmap-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .roadmap-table td, .roadmap-table th {
+      padding: 0.65rem 0.5rem;
       border-bottom: 1px solid var(--border);
       color: var(--muted);
+      text-align: left;
     }
-    .roadmap-table th { color: var(--text); font-weight: 600; }
-    .roadmap-table tr:last-child td { border-bottom: none; }
     .status-now { color: var(--accent); font-weight: 600; }
     .status-future { color: var(--purple); font-weight: 600; }
+
     footer {
       text-align: center;
-      margin-top: 2.5rem;
-      padding-top: 1.5rem;
+      margin-top: 3rem;
+      padding-top: 2rem;
       border-top: 1px solid var(--border);
-      font-size: 0.85rem;
       color: var(--muted);
+      font-size: 0.88rem;
     }
     footer nav {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 1.25rem;
       justify-content: center;
       margin-bottom: 1rem;
     }
-    footer a { color: var(--accent); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
+    footer a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--gold); }
+
+    @media (max-width: 720px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        margin-top: -3rem;
+      }
+      .logo-frame { margin: 0 auto; }
+      .badges, .cta-row { justify-content: center; }
+      .hero-text .tagline { margin-left: auto; margin-right: auto; }
+    }
   </style>
 </head>
 <body>
-  <div class="ambient" aria-hidden="true"></div>
+  <div class="bg-layer" aria-hidden="true">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+  </div>
+
   <div class="page">
-    <div class="banner-wrap">
+    <div class="banner-hero">
       <img src="docs/banner.jpg" alt="BeatBlocks Control — Your music. Your world. One perfect vibe." width="1024" height="384" />
     </div>
 
     <header class="hero">
-      <img class="hero-logo" src="docs/logo.jpg" alt="BeatBlocks Control logo" width="96" height="96" />
-      <h1><em>BeatBlocks</em> Control</h1>
-      <p class="tagline">Your music. Your world. Control Spotify from Minecraft with an overlay, HUD, and hotkeys — no API keys in the mod.</p>
-      <div class="badges">
-        <span class="badge"><strong>Fabric</strong> client mod</span>
-        <span class="badge">Minecraft <strong>1.21 – 1.21.11</strong></span>
-        <span class="badge">Java <strong>21+</strong> to build</span>
-        <span class="badge"><strong>Local</strong> bridge only</span>
+      <div class="logo-frame">
+        <div class="logo-glow" aria-hidden="true"></div>
+        <img class="hero-logo" src="docs/logo.jpg" alt="BeatBlocks Control" width="140" height="140" />
+      </div>
+      <div class="hero-text">
+        <h1><span class="brand">BeatBlocks</span> Control</h1>
+        <p class="tagline">Your music. Your world. Control Spotify from Minecraft — overlay, HUD, playlists, and hotkeys. No API keys in the mod.</p>
+        <div class="badges">
+          <span class="badge"><strong>Fabric</strong> client</span>
+          <span class="badge">MC <strong>1.21 – 1.21.11</strong></span>
+          <span class="badge"><strong>Spicetify</strong> bridge</span>
+          <span class="badge"><strong>Localhost</strong> only</span>
+        </div>
       </div>
       <div class="cta-row">
         <a class="btn btn-primary" href="https://github.com/vyas-devgna/beatblocks-control/releases/latest">Download JARs</a>
-        <a class="btn btn-modrinth" href="https://modrinth.com/project/beatblocks">Get on Modrinth</a>
+        <a class="btn btn-modrinth" href="https://modrinth.com/project/beatblocks">Modrinth</a>
         <a class="btn btn-secondary" href="https://github.com/vyas-devgna/beatblocks-control">GitHub</a>
         <a class="btn btn-secondary" href="CONTRIBUTING.md">Contribute</a>
       </div>
     </header>
 
-    <div class="features-grid" aria-label="Features">
+    <div class="features-grid reveal" aria-label="Features">
       <article class="feature-card">
         <div class="icon" aria-hidden="true">🎵</div>
         <h3>In-game music control</h3>
-        <p>Play, pause, skip, and browse your library without alt-tabbing.</p>
+        <p>Play, pause, skip, and browse without alt-tabbing out of Minecraft.</p>
       </article>
       <article class="feature-card">
         <div class="icon" aria-hidden="true">💚</div>
         <h3>Now-playing HUD</h3>
-        <p>Track, artist, and sharp cached album art on screen.</p>
+        <p>Track, artist, and sharp cached album art while you play.</p>
       </article>
       <article class="feature-card">
         <div class="icon" aria-hidden="true">⭐</div>
@@ -354,40 +517,40 @@
       <article class="feature-card">
         <div class="icon" aria-hidden="true">🎮</div>
         <h3>Hotkeys &amp; overlay</h3>
-        <p>Global J / K / L and Alt+I — configurable in controls.</p>
+        <p>Alt+I overlay plus J / K / L — all configurable.</p>
       </article>
     </div>
 
-    <section class="block" id="quick-start">
-      <h2>Quick start</h2>
+    <section class="block reveal" id="quick-start">
+      <h2>Quick start — 3 steps</h2>
       <div class="steps">
         <div class="step">
           <span class="step-num">1</span>
           <div>
-            <strong>Install Spicetify + the bridge</strong>
-            <p>Copy <code>beatblocks-api.js</code> into Spicetify Extensions, run <code>spicetify config extensions beatblocks-api.js</code> and <code>spicetify apply</code>, then restart Spotify. Or use <code>scripts/setup-spicetify-bridge.ps1</code> on Windows.</p>
+            <strong>Spicetify + bridge</strong>
+            <p>Copy <code>beatblocks-api.js</code> to Extensions, run <code>spicetify apply</code>, restart Spotify. Windows: <code>scripts/setup-spicetify-bridge.ps1</code></p>
           </div>
         </div>
         <div class="step">
           <span class="step-num">2</span>
           <div>
-            <strong>Add the mod</strong>
-            <p>Download the JAR for your <em>exact</em> Minecraft version (GitHub Releases or Modrinth). Put it in <code>mods/</code> with Fabric API.</p>
+            <strong>Install the mod</strong>
+            <p>Download the JAR for your exact MC version → <code>mods/</code> + Fabric API.</p>
           </div>
         </div>
         <div class="step">
           <span class="step-num">3</span>
           <div>
             <strong>Play</strong>
-            <p>Start Spotify, launch Minecraft, press <strong>Alt+I</strong> for the overlay or <code>/sp</code> in chat. Use <strong>J / K / L</strong> for previous / play-pause / next.</p>
+            <p>Spotify running → Minecraft → <strong>Alt+I</strong> or <code>/sp</code>. <strong>J / K / L</strong> for transport.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="block">
-      <h2>Supported Minecraft versions</h2>
-      <p>One JAR per patch release — always match your game version.</p>
+    <section class="block reveal">
+      <h2>Supported versions</h2>
+      <p>One JAR per patch — match your game exactly.</p>
       <div class="versions">
         <span class="ver">1.21</span><span class="ver">1.21.1</span><span class="ver">1.21.2</span>
         <span class="ver">1.21.3</span><span class="ver">1.21.4</span><span class="ver">1.21.5</span>
@@ -396,50 +559,64 @@
       </div>
     </section>
 
-    <section class="block">
+    <section class="block reveal">
       <h2>Roadmap</h2>
       <table class="roadmap-table">
-        <thead>
-          <tr><th>Status</th><th>What</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="status-now">Now</span></td>
-            <td>Spicetify bridge — keep Spotify open with Spicetify and <code>beatblocks-api.js</code> installed.</td>
-          </tr>
-          <tr>
-            <td><span class="status-future">Future</span></td>
-            <td>Spotify Web API integration for simpler setup (planned; API access has ongoing cost).</td>
-          </tr>
-        </tbody>
+        <tr><th>Status</th><th>Plan</th></tr>
+        <tr><td><span class="status-now">Now</span></td><td>Spicetify bridge — Spotify + Spicetify + extension required.</td></tr>
+        <tr><td><span class="status-future">Future</span></td><td>Spotify Web API for simpler setup (needs funding for API costs).</td></tr>
       </table>
     </section>
 
-    <aside class="support-panel" aria-label="Support the project">
-      <p>This mod is built in spare time. Sponsorship and tips help fund Spotify API access and future updates.</p>
-      <div class="support-actions">
-        <a class="sponsor-btn" href="https://github.com/sponsors/vyas-devgna">♥ Sponsor on GitHub</a>
-        <a href="https://chai4.me/vyasdevgna" target="_blank" rel="noopener" title="Support vyasdevgna on Chai4Me" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://chai4.me/icons/wordmark.png" alt="Chai4Me" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyasdevgna</span></a>
+    <section id="support" class="reveal" aria-label="Support the project">
+      <h2>Support BeatBlocks</h2>
+      <p class="support-desc">Built in spare time. Sponsorship and tips help fund the Spotify API roadmap and keep updates coming.</p>
+      <div class="support-cards">
+        <div class="support-card-wrap" style="transform:scale(1.35);transform-origin:center;">
+          <a class="github-sponsor-card" href="https://github.com/sponsors/vyas-devgna" target="_blank" rel="noopener" title="Sponsor vyasdevgna on GitHub">
+            <img src="https://github.githubassets.com/images/icons/spotlights/heart.png" alt="GitHub Sponsors" />
+            <span>@vyas-devgna</span>
+          </a>
+        </div>
+        <div class="support-card-wrap chai-embed" style="transform:scale(1.35);transform-origin:center;">
+          <a href="https://chai4.me/vyasdevgna" target="_blank" title="Support vyasdevgna on Chai4Me" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://chai4.me/icons/wordmark.png" alt="Chai4Me" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyasdevgna</span></a>
+        </div>
       </div>
-    </aside>
-
-    <section class="block">
-      <h2>Privacy</h2>
-      <p>The mod only talks to <code>127.0.0.1</code>. No telemetry, no credentials in Minecraft. Details in <a href="SECURITY.md" style="color:var(--accent)">SECURITY.md</a>.</p>
     </section>
 
-    <footer>
+    <section class="block reveal">
+      <h2>Privacy</h2>
+      <p>Talks only to <code>127.0.0.1</code> — no telemetry, no credentials in Minecraft. <a href="SECURITY.md" style="color:var(--accent)">SECURITY.md</a></p>
+    </section>
+
+    <footer class="reveal">
       <nav>
         <a href="https://github.com/vyas-devgna/beatblocks-control">Repository</a>
         <a href="https://modrinth.com/project/beatblocks">Modrinth</a>
-        <a href="README.md">Full README</a>
+        <a href="README.md">README</a>
         <a href="CONTRIBUTING.md">Contributing</a>
-        <a href="https://github.com/sponsors/vyas-devgna">Sponsor</a>
-        <a href="https://chai4.me/vyasdevgna">Chai4Me</a>
       </nav>
-      <p>MIT License · BeatBlocks Control (rebranded from SpotifyCraft)</p>
-      <p style="margin-top:0.4rem">Config: <code>config/beatblocks/beatblocks.json</code></p>
+      <p>MIT · BeatBlocks Control</p>
     </footer>
   </div>
+
+  <script>
+    (function () {
+      var els = document.querySelectorAll(".reveal");
+      if (!("IntersectionObserver" in window)) {
+        els.forEach(function (e) { e.classList.add("visible"); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) {
+            en.target.classList.add("visible");
+            io.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+      els.forEach(function (el) { io.observe(el); });
+    })();
+  </script>
 </body>
 </html>
