@@ -134,6 +134,7 @@
       opacity: 0.55;
       filter: blur(14px);
       animation: spin-glow 8s linear infinite;
+      pointer-events: none;
     }
     @keyframes spin-glow {
       to { transform: rotate(360deg); }
@@ -339,88 +340,48 @@
     }
     .ver:hover { color: var(--accent); border-color: var(--accent); }
 
-    /* Support section */
+    /* Support section — light theme, links must stay clickable */
     #support {
       margin: 2.5rem 0;
-      padding: 2.25rem 2rem;
+      padding: 2.5rem 2rem;
       border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      background: linear-gradient(145deg, rgba(21, 16, 32, 0.95), rgba(30, 20, 48, 0.9));
+      border: 1px solid #e5e7eb;
+      background: #f8fafc;
       text-align: center;
       position: relative;
-      overflow: hidden;
-    }
-    #support::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(234, 74, 170, 0.06), transparent, rgba(30, 215, 96, 0.06), transparent);
-      background-size: 200% 100%;
-      animation: support-shine 6s linear infinite;
-      pointer-events: none;
-    }
-    @keyframes support-shine {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
+      z-index: 2;
+      isolation: isolate;
     }
     #support h2 {
       font-size: 1.5rem;
       font-weight: 700;
       margin-bottom: 0.5rem;
-      position: relative;
+      color: #111827;
     }
     #support .support-desc {
-      color: var(--muted);
+      color: #4b5563;
       max-width: 36rem;
-      margin: 0 auto 1.75rem;
+      margin: 0 auto 2rem;
       font-size: 1rem;
-      position: relative;
     }
     .support-cards {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      align-items: stretch;
-      gap: 2rem;
-      position: relative;
-    }
-    .support-card-wrap {
-      transition: transform 0.25s ease;
-    }
-    .support-card-wrap:hover {
-      transform: translateY(-6px) scale(1.03);
-    }
-    /* Chai4Me — exact embed, scaled via wrapper */
-    .chai-embed a:hover { transform: scale(1.04); }
-    .chai-embed a {
-      transition: transform 0.2s !important;
-    }
-    /* GitHub Sponsors — matching card style */
-    .github-sponsor-card {
-      display: inline-flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      background: #ffffff;
-      padding: 8px 32px;
-      border-radius: 16px;
-      text-decoration: none;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
-      transition: transform 0.2s;
-      min-height: 88px;
+      gap: 2.5rem;
+      position: relative;
+      z-index: 3;
+      pointer-events: auto;
     }
-    .github-sponsor-card:hover { transform: scale(1.04); }
-    .github-sponsor-card img {
-      height: 32px;
-      object-fit: contain;
-      margin-bottom: 4px;
+    .support-cards a {
+      position: relative;
+      z-index: 4;
+      cursor: pointer;
+      flex-shrink: 0;
     }
-    .github-sponsor-card span {
-      color: #6b7280;
-      font-family: sans-serif;
-      font-size: 14px;
-      font-weight: 600;
+    .support-cards a:hover {
+      transform: scale(1.04);
     }
 
     .roadmap-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
@@ -568,19 +529,12 @@
       </table>
     </section>
 
-    <section id="support" class="reveal" aria-label="Support the project">
+    <section id="support" aria-label="Support the project">
       <h2>Support BeatBlocks</h2>
       <p class="support-desc">Built in spare time. Sponsorship and tips help fund the Spotify API roadmap and keep updates coming.</p>
       <div class="support-cards">
-        <div class="support-card-wrap" style="transform:scale(1.35);transform-origin:center;">
-          <a class="github-sponsor-card" href="https://github.com/sponsors/vyas-devgna" target="_blank" rel="noopener" title="Sponsor vyasdevgna on GitHub">
-            <img src="https://github.githubassets.com/images/icons/spotlights/heart.png" alt="GitHub Sponsors" />
-            <span>@vyas-devgna</span>
-          </a>
-        </div>
-        <div class="support-card-wrap chai-embed" style="transform:scale(1.35);transform-origin:center;">
-          <a href="https://chai4.me/vyasdevgna" target="_blank" title="Support vyasdevgna on Chai4Me" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://chai4.me/icons/wordmark.png" alt="Chai4Me" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyasdevgna</span></a>
-        </div>
+        <a href="https://github.com/sponsors/vyas-devgna" target="_blank" rel="noopener noreferrer" title="Sponsor vyasdevgna on GitHub" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://img.shields.io/badge/Sponsor-GitHub_Sponsors-ea4aaa?style=flat-square&amp;logo=githubsponsors&amp;logoColor=white" alt="GitHub Sponsors" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyas-devgna</span></a>
+        <a href="https://chai4.me/vyasdevgna" target="_blank" title="Support vyasdevgna on Chai4Me" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://chai4.me/icons/wordmark.png" alt="Chai4Me" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyasdevgna</span></a>
       </div>
     </section>
 
@@ -591,6 +545,7 @@
 
     <footer class="reveal">
       <nav>
+        <a href="https://vyas-devgna.github.io/beatblocks-control/">Website</a>
         <a href="https://github.com/vyas-devgna/beatblocks-control">Repository</a>
         <a href="https://modrinth.com/project/beatblocks">Modrinth</a>
         <a href="README.md">README</a>

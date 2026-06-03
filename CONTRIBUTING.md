@@ -49,4 +49,4 @@ Be respectful and constructive. Maintainers may close issues or PRs that are off
 
 ## Questions
 
-Open a GitHub issue or reach out via the links on the [project homepage](https://github.com/vyas-devgna/beatblocks-control).
+Open a GitHub issue or reach out via the [project website](https://vyas-devgna.github.io/beatblocks-control/).

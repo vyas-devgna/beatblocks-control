@@ -22,6 +22,8 @@
   <a href="https://github.com/vyas-devgna/beatblocks-control/releases/latest"><img src="https://img.shields.io/github/v/release/vyas-devgna/beatblocks-control?style=for-the-badge&label=Download" alt="Download" /></a>
   &nbsp;
   <a href="https://modrinth.com/project/beatblocks"><img src="https://img.shields.io/modrinth/dt/beatblocks?label=Modrinth&style=for-the-badge&color=00af5c&logo=modrinth" alt="Modrinth" /></a>
+  &nbsp;
+  <a href="https://vyas-devgna.github.io/beatblocks-control/"><img src="https://img.shields.io/badge/Website- beatblocks--control-111827?style=for-the-badge" alt="Website" /></a>
 </p>
 
 <p align="center">
@@ -157,14 +159,16 @@ flowchart LR
 
 BeatBlocks is built in spare time. **Sponsors and tips** help fund the Spotify API roadmap and ongoing updates.
 
-<p align="center">
-  <span style="display:inline-block;transform:scale(1.4);margin:12px 28px;vertical-align:middle;">
-    <a href="https://github.com/sponsors/vyas-devgna" target="_blank" title="Sponsor vyasdevgna on GitHub" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://github.githubassets.com/images/icons/spotlights/heart.png" alt="GitHub Sponsors" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyas-devgna</span></a>
-  </span>
-  <span style="display:inline-block;transform:scale(1.4);margin:12px 28px;vertical-align:middle;">
-    <a href="https://chai4.me/vyasdevgna" target="_blank" title="Support vyasdevgna on Chai4Me" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://chai4.me/icons/wordmark.png" alt="Chai4Me" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyasdevgna</span></a>
-  </span>
-</p>
+<table align="center" cellpadding="16">
+  <tr>
+    <td align="center">
+      <a href="https://github.com/sponsors/vyas-devgna" target="_blank" rel="noopener noreferrer" title="Sponsor vyasdevgna on GitHub" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://img.shields.io/badge/Sponsor-GitHub_Sponsors-ea4aaa?style=flat-square&amp;logo=githubsponsors&amp;logoColor=white" alt="GitHub Sponsors" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyas-devgna</span></a>
+    </td>
+    <td align="center">
+      <a href="https://chai4.me/vyasdevgna" target="_blank" title="Support vyasdevgna on Chai4Me" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://chai4.me/icons/wordmark.png" alt="Chai4Me" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyasdevgna</span></a>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -198,7 +202,7 @@ See [TESTING.md](TESTING.md) · [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.
 
 | | |
 |--|--|
-| **Landing page** | [index.html](index.html) |
+| **Website** | https://vyas-devgna.github.io/beatblocks-control/ |
 | **Releases** | https://github.com/vyas-devgna/beatblocks-control/releases |
 | **Modrinth** | https://modrinth.com/project/beatblocks |
 | **Issues** | https://github.com/vyas-devgna/beatblocks-control/issues |
