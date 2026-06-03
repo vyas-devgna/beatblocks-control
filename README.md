@@ -21,7 +21,7 @@
 <p align="center">
   <a href="https://github.com/sponsors/vyas-devgna"><img src="https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="Sponsor on GitHub" /></a>
   &nbsp;
-  <a href="https://www.chai4.me/vyasdevgna" title="Buy me a chai on Chai4Me"><img src="https://www.chai4.me/logo.png" alt="Chai4Me" height="32" /></a>
+  <a href="https://chai4.me/vyasdevgna" target="_blank" title="Support vyasdevgna on Chai4Me" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://chai4.me/icons/wordmark.png" alt="Chai4Me" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyasdevgna</span></a>
 </p>
 
 <p align="center">
@@ -178,7 +178,7 @@ flowchart LR
 I would like to add official Spotify API integration next. That needs developer API access and ongoing maintenance. Right now I am funding this in my spare time — **sponsorship helps a lot**:
 
 - **[GitHub Sponsors](https://github.com/sponsors/vyas-devgna)** — recurring support
-- **[Chai4Me](https://www.chai4.me/vyasdevgna)** — one-time tips (UPI / cards)
+- **[Chai4Me](https://chai4.me/vyasdevgna)** — one-time tips (UPI / cards)
 
 ---
 
@@ -219,7 +219,7 @@ See [TESTING.md](TESTING.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 | **Issues** | https://github.com/vyas-devgna/beatblocks-control/issues |
 | **Contributing** | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | **Sponsor** | https://github.com/sponsors/vyas-devgna |
-| **Tip jar** | https://www.chai4.me/vyasdevgna |
+| **Tip jar** | https://chai4.me/vyasdevgna |
 
 ---
 
