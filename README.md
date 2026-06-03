@@ -23,7 +23,7 @@
   &nbsp;
   <a href="https://modrinth.com/project/beatblocks"><img src="https://img.shields.io/modrinth/dt/beatblocks?label=Modrinth&style=for-the-badge&color=00af5c&logo=modrinth" alt="Modrinth" /></a>
   &nbsp;
-  <a href="https://vyas-devgna.github.io/beatblocks-control/"><img src="https://img.shields.io/badge/Website- beatblocks--control-111827?style=for-the-badge" alt="Website" /></a>
+  <a href="https://vyas-devgna.github.io/beatblocks-control/"><img src="https://img.shields.io/badge/Website-visit-111827?style=for-the-badge" alt="Website" /></a>
 </p>
 
 <p align="center">
