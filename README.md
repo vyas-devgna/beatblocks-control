@@ -160,9 +160,9 @@ flowchart LR
 BeatBlocks is built in spare time. **Sponsors and tips** help fund the Spotify API roadmap and ongoing updates.
 
 <p align="center">
-  <iframe src="https://github.com/sponsors/vyas-devgna/button" title="Sponsor vyas-devgna" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://chai4.me/vyasdevgna" target="_blank" rel="noopener noreferrer" title="Support vyasdevgna on Chai4Me"><img src="https://vyas-devgna.github.io/Portfolio/images/chai4me-support.png" alt="Chai4Me @vyasdevgna" height="56" style="border:0;vertical-align:middle;" /></a>
+  <a href="https://github.com/sponsors/vyas-devgna"><img src="https://img.shields.io/badge/Sponsor-@vyas--devgna-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="Sponsor @vyas-devgna on GitHub" height="32" /></a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://chai4.me/vyasdevgna"><img src="https://raw.githubusercontent.com/vyas-devgna/beatblocks-control/main/docs/chai4me-support.png" alt="Chai4Me @vyasdevgna" height="56" /></a>
 </p>
 
 ---
