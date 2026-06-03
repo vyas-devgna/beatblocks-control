@@ -159,16 +159,11 @@ flowchart LR
 
 BeatBlocks is built in spare time. **Sponsors and tips** help fund the Spotify API roadmap and ongoing updates.
 
-<table align="center" cellpadding="16">
-  <tr>
-    <td align="center">
-      <a href="https://github.com/sponsors/vyas-devgna" target="_blank" rel="noopener noreferrer" title="Sponsor vyasdevgna on GitHub" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://img.shields.io/badge/Sponsor-GitHub_Sponsors-ea4aaa?style=flat-square&amp;logo=githubsponsors&amp;logoColor=white" alt="GitHub Sponsors" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyas-devgna</span></a>
-    </td>
-    <td align="center">
-      <a href="https://chai4.me/vyasdevgna" target="_blank" title="Support vyasdevgna on Chai4Me" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://chai4.me/icons/wordmark.png" alt="Chai4Me" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyasdevgna</span></a>
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <a href="https://github.com/sponsors/vyas-devgna" target="_blank" title="Sponsor vyasdevgna on GitHub" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://github.githubassets.com/images/icons/spotlights/heart.png" alt="GitHub Sponsors" style="height:32px;width:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyas-devgna</span></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://chai4.me/vyasdevgna" target="_blank" title="Support vyasdevgna on Chai4Me" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;padding:8px 32px;border-radius:16px;text-decoration:none;border:1px solid #e5e7eb;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);transition:transform 0.2s;"><img src="https://chai4.me/icons/wordmark.png" alt="Chai4Me" style="height:32px;object-fit:contain;margin-bottom:4px;"/><span style="color:#6b7280;font-family:sans-serif;font-size:14px;font-weight:600;">@vyasdevgna</span></a>
+</p>
 
 ---
 
