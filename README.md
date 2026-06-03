@@ -1,34 +1,131 @@
-# BeatBlocks Control
+<p align="center">
+  <img src="docs/banner.jpg" alt="BeatBlocks Control — in-game music control for Minecraft" width="100%" />
+</p>
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.21–1.21.11-brightgreen?style=flat-square)](https://minecraft.net)
-[![Fabric](https://img.shields.io/badge/Loader-Fabric-blue?style=flat-square)](https://fabricmc.net)
-[![Java](https://img.shields.io/badge/Java-21+-orange?style=flat-square&logo=openjdk)](https://adoptium.net)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+<p align="center">
+  <img src="docs/logo.jpg" alt="BeatBlocks Control logo" width="128" height="128" />
+</p>
 
-Client-side **Fabric mod** for Minecraft Java that adds a BeatBlocks controller overlay, compact now-playing HUD, and global media hotkeys — powered by a **local Spicetify bridge**. No OAuth, no API credentials, no developer dashboard.
+<h1 align="center">BeatBlocks Control</h1>
 
-> **Zero login in the mod.** BeatBlocks controls your already-running desktop music player through a Spicetify extension. Credentials stay in the desktop app; the mod only talks to `localhost`.
+<p align="center">
+  <strong>Control Spotify from inside Minecraft</strong> — overlay, now-playing HUD, playlists, and hotkeys.<br />
+  Works through a <strong>local Spicetify bridge</strong>. No API keys or login inside the mod.
+</p>
 
-## Features
+<p align="center">
+  <a href="https://github.com/vyas-devgna/beatblocks-control/releases/latest"><img src="https://img.shields.io/github/v/release/vyas-devgna/beatblocks-control?style=for-the-badge&label=Download" alt="Download release" /></a>
+  <a href="https://modrinth.com/project/beatblocks"><img src="https://img.shields.io/modrinth/dt/beatblocks?label=Modrinth&style=for-the-badge&color=00af5c&logo=modrinth" alt="Modrinth" /></a>
+</p>
 
-| Feature | Description |
-|---------|-------------|
-| **Local bridge** | Controls playback via Spicetify — no mod-side login |
-| **Diagnostics** | Live bridge / extension / heartbeat status |
-| **Enhanced overlay** | Playlists, liked songs, albums, queue, now playing |
-| **Default overlay** | Settings, HUD scale, mode selection, transport |
-| **Compact HUD** | Resizable now-playing widget with transport buttons |
-| **Cover art** | Sharp cached album art (configurable resolution) |
-| **Hotkeys** | Play/pause, next, previous (configurable) |
+<p align="center">
+  <a href="https://github.com/sponsors/vyas-devgna"><img src="https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="Sponsor on GitHub" /></a>
+  &nbsp;
+  <a href="https://www.chai4.me/vyasdevgna" title="Buy me a chai on Chai4Me"><img src="https://www.chai4.me/logo.png" alt="Chai4Me" height="32" /></a>
+</p>
 
-Search was removed from the overlay and bridge — library browsing uses playlists, albums, and liked songs only.
+<p align="center">
+  <img src="https://img.shields.io/badge/Minecraft-1.21–1.21.11-brightgreen?style=flat-square" alt="Minecraft versions" />
+  <img src="https://img.shields.io/badge/Loader-Fabric-blue?style=flat-square" alt="Fabric" />
+  <img src="https://img.shields.io/badge/Java-21+-orange?style=flat-square&logo=openjdk" alt="Java 21+" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License" />
+</p>
 
-## Supported Minecraft versions
+---
 
-Pre-built JARs are published per version (see [Releases](https://github.com/vyas-devgna/beatblocks-control/releases)):
+## What is this?
 
-| Minecraft | Release asset |
-|-----------|---------------|
+**BeatBlocks Control** is a client-side Fabric mod that lets you control the Spotify desktop app while you play Minecraft:
+
+- Open an in-game **music overlay** (playlists, albums, liked songs, queue)
+- See a **now-playing HUD** with album art
+- Use **global hotkeys** for play/pause, next, and previous
+
+The mod talks only to `127.0.0.1` on your PC. Spotify credentials never go into Minecraft.
+
+---
+
+## Try it in 5 minutes
+
+### What you need
+
+| Item | Notes |
+|------|--------|
+| **Minecraft Java** | 1.21 through 1.21.11 |
+| **Fabric Loader** | ≥ 0.16.10 + **Fabric API** in `mods/` |
+| **Spotify desktop** | Windows typical path; must stay open while playing |
+| **Spicetify** | Customizes Spotify and runs our bridge extension |
+
+### Step 1 — Install Spicetify
+
+**Windows (PowerShell):**
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/spicetify/cli/main/install.ps1 | iex
+spicetify backup apply
+```
+
+### Step 2 — Add the bridge extension
+
+Copy `beatblocks-api.js` from this repo into your Spicetify Extensions folder:
+
+| OS | Path |
+|----|------|
+| Windows | `%APPDATA%\spicetify\Extensions\beatblocks-api.js` |
+| Linux / macOS | `~/.config/spicetify/Extensions/beatblocks-api.js` |
+
+Or run the guided script:
+
+```powershell
+.\scripts\setup-spicetify-bridge.ps1
+```
+
+Then enable it:
+
+```powershell
+spicetify config extensions beatblocks-api.js
+spicetify apply
+```
+
+Restart **Spotify** after `spicetify apply`.
+
+### Step 3 — Install the mod
+
+1. Download the JAR that **exactly matches** your Minecraft version from **[Releases](https://github.com/vyas-devgna/beatblocks-control/releases)** or **[Modrinth](https://modrinth.com/project/beatblocks)**.
+2. Put it in your instance `mods/` folder together with **Fabric API**.
+3. Launch Minecraft.
+
+### Step 4 — Check that it works
+
+1. Open Spotify and start a song.
+2. In Minecraft, press **Alt+I** (default) to open the overlay.
+3. Optional: run `.\scripts\test-spicetify-bridge.ps1` to verify the local bridge.
+
+**Not working?** Make sure Spotify is running, Spicetify applied successfully, and you picked the correct JAR for your Minecraft patch version.
+
+---
+
+## Controls (defaults)
+
+Change these under **Options → Controls → BeatBlocks**.
+
+| Action | Key |
+|--------|-----|
+| Open overlay | **Alt+I** |
+| Play / pause | **K** |
+| Next track | **L** |
+| Previous track | **J** |
+
+You can also use `/sp` in chat to open the overlay.
+
+---
+
+## Download the right JAR
+
+Use **one JAR per Minecraft patch** — do not use a 1.21.5 JAR on 1.21.11.
+
+| Minecraft | File name |
+|-----------|-----------|
 | 1.21.11 | `beatblocks-control-mc-1.21.11.jar` |
 | 1.21.10 | `beatblocks-control-mc-1.21.10.jar` |
 | 1.21.9 | `beatblocks-control-mc-1.21.9.jar` |
@@ -42,96 +139,48 @@ Pre-built JARs are published per version (see [Releases](https://github.com/vyas
 | 1.21.1 | `beatblocks-control-mc-1.21.1.jar` |
 | 1.21 | `beatblocks-control-mc-1.21.jar` |
 
-Use the JAR that matches your Minecraft patch version exactly.
+---
 
-## How it works
+## Features
+
+- **In-game music control** — play, pause, skip, browse library
+- **Now-playing HUD** — track title, artist, album art (cached)
+- **Playlists, albums & liked songs** — no in-overlay search (removed for stability)
+- **Default & enhanced overlay** — pick your UI in settings
+- **Diagnostics** — bridge / extension / heartbeat status in-game
+- **Privacy** — localhost only; see [SECURITY.md](SECURITY.md)
+
+---
+
+## How it works (simple)
 
 ```mermaid
-graph LR
-    subgraph Minecraft
-        Mod[BeatBlocks Mod]
-        Server[HTTP Server localhost:50321]
-        HUD[HUD]
-        Overlay[Overlay]
-    end
-    subgraph Desktop
-        Player[Desktop music player]
-        Spicetify[Spicetify]
-        Ext[beatblocks-api.js]
-    end
-    Mod --> Server
-    Mod --> HUD
-    Mod --> Overlay
-    Player --> Spicetify
-    Spicetify --> Ext
-    Ext <-->|REST + long-poll| Server
+flowchart LR
+  MC[Minecraft mod] -->|localhost:50321| Bridge[HTTP bridge]
+  Bridge <-->|REST| Ext[beatblocks-api.js]
+  Ext --> Spicetify[Spicetify]
+  Spicetify --> Spotify[Spotify desktop]
 ```
 
-The mod starts an HTTP server on `127.0.0.1:50321`. The Spicetify extension:
+1. The mod starts a small server on `127.0.0.1:50321`.
+2. The Spicetify extension sends playback updates and listens for commands.
+3. Nothing leaves your computer except normal Spotify traffic.
 
-1. Pushes playback state to `POST /state`
-2. Long-polls `GET /commands` for play/pause/next/library requests
-3. Posts results to `POST /response`
+---
 
-## Setup guide
+## Roadmap
 
-### Prerequisites
+| Status | Plan |
+|--------|------|
+| **Now** | Spicetify bridge — Spotify must be open with Spicetify + `beatblocks-api.js` installed |
+| **Future** | Native **Spotify Web API** support so setup may be simpler (still planning; API access has cost) |
 
-- Minecraft Java **1.21 – 1.21.11** with **Fabric Loader** ≥ 0.16.10 and **Fabric API**
-- Desktop music player with **Spicetify** (Windows: typical install uses `Spotify.exe`)
-- **Java 21+** for building; the game runtime can use the launcher’s bundled Java
+I would like to add official Spotify API integration next. That needs developer API access and ongoing maintenance. Right now I am funding this in my spare time — **sponsorship helps a lot**:
 
-### 1. Install Spicetify
+- **[GitHub Sponsors](https://github.com/sponsors/vyas-devgna)** — recurring support
+- **[Chai4Me](https://www.chai4.me/vyasdevgna)** — one-time tips (UPI / cards)
 
-```powershell
-iwr -useb https://raw.githubusercontent.com/spicetify/cli/main/install.ps1 | iex
-spicetify backup apply
-```
-
-### 2. Deploy the bridge extension
-
-Copy `beatblocks-api.js` from this repo to:
-
-- **Windows:** `%APPDATA%\spicetify\Extensions\beatblocks-api.js`
-- **Linux/macOS:** `~/.config/spicetify/Extensions/beatblocks-api.js`
-
-Or run the guided script:
-
-```powershell
-.\scripts\setup-spicetify-bridge.ps1
-```
-
-Register and apply:
-
-```powershell
-spicetify config extensions beatblocks-api.js
-spicetify apply
-```
-
-### 3. Install the mod
-
-1. Download the JAR for your Minecraft version from [Releases](https://github.com/vyas-devgna/beatblocks-control/releases)
-2. Place it in your instance `mods/` folder with **Fabric API**
-3. Launch Minecraft
-
-### 4. Verify
-
-```powershell
-.\scripts\test-spicetify-bridge.ps1
-```
-
-In-game: open the desktop player, start playback, press **Alt+I**, check bridge status in the overlay.
-
-## Controls
-
-Configurable under **Options → Controls → BeatBlocks**.
-
-| Action | Default | Notes |
-|--------|---------|-------|
-| Open overlay | Alt+I | Default or Enhanced UI |
-| Play / pause | K | Global when not typing |
-| Next track | L | |
-| Previous track | J | |
+---
 
 ## Configuration
 
@@ -139,56 +188,40 @@ File: `.minecraft/config/beatblocks/beatblocks.json`
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `bridgePort` | `50321` | Local HTTP port (must match extension) |
+| `bridgePort` | `50321` | Local HTTP port |
 | `apiPollSeconds` | `4` | Playback poll interval |
-| `hudScaleMultiplier` | `1.0` | HUD size (0.35–3.0 in overlay) |
-| `coverPixels` | `256` | Max cover art dimension |
+| `hudScaleMultiplier` | `1.0` | HUD size |
+| `coverPixels` | `256` | Max cover art size |
 | `selectedMode` | `DEFAULT` | `DEFAULT` or `ENHANCED` |
+
+---
 
 ## Building from source
 
-Requires **Java 21** (`JAVA_HOME` or Prism Launcher runtime).
+Requires **Java 21**.
 
 ```powershell
-# Single version (default 1.21.5 from gradle.properties)
 .\gradlew.bat clean build
-
-# All supported versions
-.\scripts\build-minecraft-versions.ps1
-```
-
-Output: `releases/beatblocks-control-mc-<version>.jar` (not committed — upload to GitHub Releases).
-
-Tests:
-
-```powershell
+.\scripts\build-minecraft-versions.ps1   # all MC versions → releases/
 .\gradlew.bat test
 ```
 
-See [TESTING.md](TESTING.md) for QA checklists.
+See [TESTING.md](TESTING.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Project structure
+---
 
-```
-beatblocks-control/
-├── beatblocks-api.js          # Spicetify bridge extension
-├── src/main/java/com/devgnav/beatblocks/
-│   ├── BeatBlocksClient.java
-│   ├── BeatBlocksServices.java
-│   ├── config/BeatBlocksConfig.java
-│   ├── spotify/BeatBlocksApiClient.java   # Bridge server + API
-│   ├── ui/                                # HUD + overlays
-│   └── mode/ModeManager.java
-├── scripts/
-│   ├── setup-spicetify-bridge.ps1
-│   ├── test-spicetify-bridge.ps1
-│   └── build-minecraft-versions.ps1
-└── TESTING.md
-```
+## Links
 
-## Privacy
+| | |
+|--|--|
+| **Releases** | https://github.com/vyas-devgna/beatblocks-control/releases |
+| **Modrinth** | https://modrinth.com/project/beatblocks |
+| **Issues** | https://github.com/vyas-devgna/beatblocks-control/issues |
+| **Contributing** | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| **Sponsor** | https://github.com/sponsors/vyas-devgna |
+| **Tip jar** | https://www.chai4.me/vyasdevgna |
 
-See [SECURITY.md](SECURITY.md). Summary: localhost-only bridge, no telemetry, no mod-side credentials.
+---
 
 ## License
 
