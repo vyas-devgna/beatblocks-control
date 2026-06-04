@@ -379,6 +379,25 @@
     .support-cards a { transition: opacity 0.15s ease; }
     .support-cards a:hover { opacity: 0.85; text-decoration: none; }
     .support-cards img { display: block; border: 0; }
+    .upi-tip {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.5rem 0.85rem;
+      text-decoration: none;
+      color: var(--fg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .upi-tip:hover { border-color: var(--green); text-decoration: none; }
+    .upi-tip img {
+      border-radius: 10px;
+      background: #fff;
+      padding: 4px;
+    }
+    .upi-tip span { font-size: 0.82rem; font-weight: 600; color: var(--muted); }
 
     footer {
       text-align: center;
@@ -548,8 +567,9 @@
         <a href="https://github.com/sponsors/vyas-devgna" target="_blank" rel="noopener noreferrer">
           <img src="https://img.shields.io/badge/Sponsor-@vyas--devgna-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="GitHub Sponsors" height="40" />
         </a>
-        <a href="https://chai4.me/vyasdevgna" target="_blank" rel="noopener noreferrer">
-          <img src="docs/chai4me-support.png" alt="Chai4Me" height="56" style="height:56px;width:auto;" />
+        <a class="upi-tip" href="https://vyas-devgna.github.io/Portfolio/tip.html" target="_blank" rel="noopener noreferrer" title="Tip via UPI">
+          <img src="https://vyas-devgna.github.io/Portfolio/images/upi-logo.png" alt="Tip via UPI" width="48" height="48" />
+          <span>Tip via UPI</span>
         </a>
       </div>
     </section>
