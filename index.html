@@ -8,441 +8,546 @@
   <link rel="icon" href="docs/logo.jpg" type="image/jpeg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
   <style>
     :root {
-      --bg: #08060e;
-      --panel: #151020;
-      --panel-hover: #1c1630;
-      --border: #322a4a;
-      --text: #f8f4ff;
-      --muted: #b0a3cc;
-      --accent: #1ed760;
-      --accent-glow: rgba(30, 215, 96, 0.45);
-      --purple: #9b5de5;
-      --pink: #f15bb5;
-      --gold: #fee440;
-      --sponsor: #ea4aaa;
-      --radius: 16px;
-      --radius-lg: 22px;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: "Outfit", system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      min-height: 100vh;
-      overflow-x: hidden;
+      --bg: #fdfbf7;
+      --fg: #2d2d2d;
+      --muted: #e5e0d8;
+      --accent: #ff4d4d;
+      --border: #2d2d2d;
+      --blue: #2d5da1;
+      --postit: #fff9c4;
+      --card: #ffffff;
+      --radius-wobbly: 255px 15px 225px 15px / 15px 225px 15px 255px;
+      --radius-wobbly-md: 58px 24px 52px 18px / 22px 48px 20px 54px;
+      --radius-wobbly-sm: 42px 14px 38px 12px / 14px 36px 12px 40px;
+      --shadow: 4px 4px 0 0 var(--border);
+      --shadow-lg: 8px 8px 0 0 var(--border);
+      --shadow-soft: 3px 3px 0 0 rgba(45, 45, 45, 0.12);
+      --shadow-hover: 2px 2px 0 0 var(--border);
+      --font-heading: "Kalam", "Comic Sans MS", cursive;
+      --font-body: "Patrick Hand", "Segoe Print", cursive;
+      --section-pad: 5rem;
     }
 
-    /* Animated background */
-    .bg-layer {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-    .bg-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.5;
-      animation: drift 18s ease-in-out infinite alternate;
-    }
-    .bg-orb-1 {
-      width: 55vw; height: 55vw; max-width: 520px; max-height: 520px;
-      background: rgba(155, 93, 229, 0.35);
-      top: -12%; left: -8%;
-    }
-    .bg-orb-2 {
-      width: 45vw; height: 45vw; max-width: 420px; max-height: 420px;
-      background: rgba(30, 215, 96, 0.2);
-      bottom: 5%; right: -6%;
-      animation-delay: -6s;
-    }
-    .bg-orb-3 {
-      width: 35vw; height: 35vw; max-width: 320px; max-height: 320px;
-      background: rgba(241, 91, 181, 0.18);
-      top: 45%; left: 40%;
-      animation-delay: -12s;
-    }
-    @keyframes drift {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(40px, -30px) scale(1.08); }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 1.125rem;
+      color: var(--fg);
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-color: var(--bg);
+      background-image: radial-gradient(var(--muted) 1px, transparent 1px);
+      background-size: 24px 24px;
     }
 
     .page {
       position: relative;
-      z-index: 1;
-      max-width: 1040px;
+      max-width: 64rem;
       margin: 0 auto;
-      padding: 0 1.5rem 5rem;
+      padding: 0 1.5rem 4rem;
     }
 
-    /* Banner */
-    .banner-hero {
-      margin: 0 -1.5rem;
+    /* ── Typography ── */
+    h1, h2, h3 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--fg);
+    }
+    h1 { font-size: clamp(2.5rem, 8vw, 3.75rem); }
+    h2 { font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 1rem; }
+    h3 { font-size: 1.25rem; }
+
+    a { color: var(--blue); }
+    a:hover { color: var(--accent); }
+
+    code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.9em;
+      background: var(--muted);
+      padding: 0.1rem 0.4rem;
+      border: 2px dashed var(--border);
+      border-radius: 6px 12px 8px 10px / 10px 8px 12px 6px;
+    }
+
+    /* ── Wobbly primitives ── */
+    .wobbly {
+      border: 3px solid var(--border);
+      border-radius: var(--radius-wobbly);
+    }
+    .wobbly-md {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-wobbly-md);
+    }
+    .wobbly-sm {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-wobbly-sm);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-height: 3rem;
+      padding: 0.65rem 1.35rem;
+      font-family: var(--font-body);
+      font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+      font-weight: 400;
+      text-decoration: none;
+      color: var(--fg);
+      background: var(--card);
+      border: 3px solid var(--border);
+      border-radius: var(--radius-wobbly-sm);
+      box-shadow: var(--shadow);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease, color 0.1s ease;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: var(--shadow-hover);
+      transform: translate(2px, 2px);
+    }
+    .btn:active {
+      box-shadow: none;
+      transform: translate(4px, 4px);
+    }
+    .btn-secondary {
+      background: var(--muted);
+    }
+    .btn-secondary:hover {
+      background: var(--blue);
+      color: #fff;
+    }
+    .btn-modrinth:hover { background: #1bd96a; color: var(--fg); }
+
+    /* ── Cards ── */
+    .sketch-card {
       position: relative;
-      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-      overflow: hidden;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+      background: var(--card);
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-soft);
+      transition: transform 0.1s ease;
     }
-    .banner-hero::after {
-      content: "";
+    .sketch-card:hover { transform: rotate(0.5deg); }
+    .sketch-card.postit {
+      background: var(--postit);
+      box-shadow: var(--shadow);
+      transform: rotate(-0.8deg);
+    }
+    .sketch-card.postit:hover { transform: rotate(0.3deg); }
+
+    .tape {
       position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, var(--bg) 0%, transparent 45%);
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-2deg);
+      width: 72px;
+      height: 22px;
+      background: rgba(200, 200, 200, 0.55);
+      border: 1px dashed rgba(45, 45, 45, 0.25);
       pointer-events: none;
+      z-index: 2;
     }
-    .banner-hero img {
+    .tack {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--border);
+      box-shadow: 1px 2px 0 var(--border);
+      z-index: 2;
+    }
+
+    .sticky-label {
+      display: inline-block;
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      padding: 0.25rem 0.75rem;
+      background: var(--postit);
+      border: 2px solid var(--border);
+      border-radius: 4px 12px 6px 10px / 10px 6px 12px 4px;
+      transform: rotate(-2deg);
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── Hero ── */
+    .top-banner {
+      margin: 1.25rem -0.25rem 0;
+      position: relative;
+      transform: rotate(-0.6deg);
+      box-shadow: var(--shadow-lg);
+    }
+    .top-banner img {
       display: block;
       width: 100%;
       height: auto;
-      animation: banner-in 1s ease-out;
+      border: 3px solid var(--border);
+      border-radius: 48px 12px 44px 14px / 14px 42px 12px 46px;
     }
-    @keyframes banner-in {
-      from { opacity: 0; transform: scale(1.03); }
-      to { opacity: 1; transform: scale(1); }
+    .corner-frame {
+      position: absolute;
+      inset: 12px;
+      pointer-events: none;
+      border: 3px dashed var(--border);
+      border-radius: 32px 8px 28px 10px / 10px 28px 8px 32px;
+      opacity: 0.35;
     }
 
-    /* Hero with logo */
     .hero {
       display: grid;
       grid-template-columns: auto 1fr;
-      gap: 1.75rem 2rem;
+      gap: 1.5rem 2rem;
       align-items: center;
-      margin-top: -4.5rem;
-      padding: 0 0.5rem 2.5rem;
-      animation: hero-in 0.9s ease-out 0.15s both;
-    }
-    @keyframes hero-in {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .logo-frame {
+      padding: 2.5rem 0 2rem;
       position: relative;
+    }
+    .hero-logo-wrap {
+      position: relative;
+      transform: rotate(-2deg);
       flex-shrink: 0;
     }
-    .logo-glow {
-      position: absolute;
-      inset: -12px;
-      border-radius: 28px;
-      background: conic-gradient(from 0deg, var(--accent), var(--purple), var(--pink), var(--gold), var(--accent));
-      opacity: 0.55;
-      filter: blur(14px);
-      animation: spin-glow 8s linear infinite;
-      pointer-events: none;
-    }
-    @keyframes spin-glow {
-      to { transform: rotate(360deg); }
-    }
     .hero-logo {
-      position: relative;
-      width: 140px;
-      height: 140px;
-      border-radius: 22px;
+      width: 132px;
+      height: 132px;
       object-fit: cover;
-      border: 3px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
-      animation: float-logo 4s ease-in-out infinite;
-    }
-    @keyframes float-logo {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-    .hero-text h1 {
-      font-size: clamp(2.25rem, 6vw, 3.25rem);
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      line-height: 1.1;
-    }
-    .hero-text h1 .brand {
-      background: linear-gradient(120deg, var(--accent) 0%, var(--gold) 50%, var(--pink) 100%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: shimmer 4s linear infinite;
-    }
-    @keyframes shimmer {
-      0% { background-position: 0% center; }
-      100% { background-position: 200% center; }
+      border: 3px solid var(--border);
+      border-radius: 38px 14px 34px 16px / 16px 32px 14px 36px;
+      box-shadow: var(--shadow);
+      background: var(--card);
     }
     .hero-text .tagline {
-      color: var(--muted);
-      font-size: 1.15rem;
-      margin-top: 0.65rem;
-      max-width: 34rem;
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      margin-top: 0.5rem;
+      max-width: 36rem;
     }
+    .hero-bang {
+      display: inline-block;
+      color: var(--accent);
+      transform: rotate(8deg);
+      animation: bounce-deco 3s ease-in-out infinite;
+    }
+    @keyframes bounce-deco {
+      0%, 100% { transform: rotate(8deg) translateY(0); }
+      50% { transform: rotate(12deg) translateY(-6px); }
+    }
+
     .badges {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-      margin-top: 1.1rem;
+      margin-top: 1rem;
     }
     .badge {
-      font-size: 0.78rem;
-      font-weight: 500;
-      padding: 0.4rem 0.85rem;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(21, 16, 32, 0.85);
-      color: var(--muted);
-      backdrop-filter: blur(8px);
-      transition: border-color 0.2s, transform 0.2s;
+      font-size: 1rem;
+      padding: 0.35rem 0.85rem;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 20px 8px 18px 6px / 8px 18px 6px 20px;
+      box-shadow: 2px 2px 0 var(--border);
+      transition: transform 0.1s ease;
     }
-    .badge:hover { border-color: var(--purple); transform: translateY(-2px); }
-    .badge strong { color: var(--text); }
+    .badge:hover { transform: rotate(-2deg) translateY(-2px); }
 
     .cta-row {
       display: flex;
       flex-wrap: wrap;
       gap: 0.75rem;
-      margin-top: 1.5rem;
+      margin-top: 1.25rem;
       grid-column: 1 / -1;
+      position: relative;
     }
-    a.btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.85rem 1.5rem;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      text-decoration: none;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    a.btn:hover { transform: translateY(-3px) scale(1.02); }
-    a.btn-primary {
-      background: linear-gradient(135deg, var(--accent), #12a34a);
-      color: #041208;
-      box-shadow: 0 8px 28px var(--accent-glow);
-      animation: pulse-cta 2.5s ease-in-out infinite;
-    }
-    @keyframes pulse-cta {
-      0%, 100% { box-shadow: 0 8px 28px var(--accent-glow); }
-      50% { box-shadow: 0 8px 40px rgba(30, 215, 96, 0.65); }
-    }
-    a.btn-modrinth { background: #1bd96a; color: #052610; box-shadow: 0 8px 24px rgba(27, 217, 106, 0.35); }
-    a.btn-secondary {
-      background: var(--panel);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    a.btn-secondary:hover { border-color: var(--purple); box-shadow: 0 8px 24px rgba(155, 93, 229, 0.2); }
-
-    /* Reveal on scroll */
-    .reveal {
-      opacity: 0;
-      transform: translateY(28px);
-      transition: opacity 0.65s ease, transform 0.65s ease;
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
+    .cta-arrow {
+      display: none;
+      position: absolute;
+      left: -4rem;
+      top: 50%;
+      width: 80px;
+      height: 48px;
+      transform: translateY(-50%);
+      color: var(--border);
     }
 
+    /* ── Features ── */
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      margin: 2rem 0;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin: 2.5rem 0;
     }
     .feature-card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.4rem 1.5rem;
+      position: relative;
+      padding: 1.5rem 1.25rem 1.35rem;
       text-align: center;
-      transition: transform 0.25s ease, border-color 0.25s, box-shadow 0.25s, background 0.25s;
+      min-height: 11rem;
     }
-    .feature-card:hover {
-      transform: translateY(-6px);
-      border-color: var(--purple);
-      background: var(--panel-hover);
-      box-shadow: 0 16px 40px rgba(155, 93, 229, 0.15);
-    }
-    .feature-card .icon {
-      font-size: 2rem;
-      margin-bottom: 0.6rem;
-      display: inline-block;
-      animation: bounce-icon 2s ease-in-out infinite;
-    }
-    .feature-card:nth-child(2) .icon { animation-delay: 0.2s; }
-    .feature-card:nth-child(3) .icon { animation-delay: 0.4s; }
-    .feature-card:nth-child(4) .icon { animation-delay: 0.6s; }
-    @keyframes bounce-icon {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
-    }
-    .feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
-    .feature-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+    .feature-card:nth-child(1) { transform: rotate(-1.2deg); }
+    .feature-card:nth-child(2) { transform: rotate(1deg); }
+    .feature-card:nth-child(3) { transform: rotate(-0.5deg); }
+    .feature-card:nth-child(4) { transform: rotate(1.3deg); }
+    .feature-card:hover { transform: rotate(0deg) scale(1.02); }
 
-    section.block {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.6rem 1.85rem;
-      margin-bottom: 1.25rem;
-      transition: border-color 0.3s;
+    .icon-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 3rem;
+      height: 3rem;
+      margin-bottom: 0.65rem;
+      border: 2px solid var(--border);
+      border-radius: 50% 42% 48% 40% / 42% 48% 40% 50%;
+      background: var(--card);
     }
-    section.block:hover { border-color: rgba(155, 93, 229, 0.4); }
-    section.block h2 {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: var(--gold);
+    .icon-circle svg {
+      width: 1.5rem;
+      height: 1.5rem;
+      stroke-width: 2.5;
     }
-    section.block p, section.block li { color: var(--muted); font-size: 0.95rem; }
-    section.block code {
-      font-family: "JetBrains Mono", ui-monospace, monospace;
-      font-size: 0.85em;
-      color: var(--accent);
-      background: var(--bg);
-      padding: 0.15rem 0.45rem;
-      border-radius: 5px;
+    .feature-card p {
+      font-size: 1.05rem;
+      margin-top: 0.35rem;
     }
-    .steps .step {
+
+    /* ── Steps ── */
+    .steps-wrap {
+      position: relative;
+    }
+    .steps-squiggle {
+      display: none;
+      position: absolute;
+      left: 1.1rem;
+      top: 3.5rem;
+      bottom: 3rem;
+      width: 24px;
+      color: var(--border);
+      opacity: 0.5;
+      z-index: 0;
+    }
+    .steps { position: relative; z-index: 1; }
+    .step {
       display: flex;
-      gap: 1rem;
-      padding: 1.1rem 0;
-      border-bottom: 1px solid var(--border);
-      transition: padding-left 0.25s;
+      gap: 1.1rem;
+      padding: 1.15rem 0;
+      border-bottom: 2px dashed var(--muted);
+      transition: transform 0.1s ease;
     }
-    .steps .step:hover { padding-left: 0.35rem; }
-    .steps .step:last-child { border-bottom: none; }
+    .step:last-child { border-bottom: none; }
+    .step:hover { transform: translateX(4px); }
     .step-num {
       flex-shrink: 0;
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--purple), var(--pink));
-      color: #fff;
-      font-weight: 700;
+      width: 2.5rem;
+      height: 2.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 16px rgba(241, 91, 181, 0.35);
-    }
-    .step strong { color: var(--text); display: block; margin-bottom: 0.3rem; }
-    .versions { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.85rem; }
-    .ver {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 0.72rem;
-      padding: 0.3rem 0.6rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--muted);
-      transition: color 0.2s, border-color 0.2s;
-    }
-    .ver:hover { color: var(--accent); border-color: var(--accent); }
-
-    /* Support section — light theme, links must stay clickable */
-    #support {
-      margin: 2.5rem 0;
-      padding: 2.5rem 2rem;
-      border-radius: var(--radius-lg);
-      border: 1px solid #e5e7eb;
-      background: #f8fafc;
-      text-align: center;
-      position: relative;
-      z-index: 2;
-      isolation: isolate;
-    }
-    #support h2 {
-      font-size: 1.5rem;
+      font-family: var(--font-heading);
       font-weight: 700;
-      margin-bottom: 0.5rem;
-      color: #111827;
+      font-size: 1.15rem;
+      background: var(--postit);
+      border: 3px solid var(--border);
+      border-radius: 45% 55% 52% 48% / 48% 45% 55% 52%;
+      box-shadow: 3px 3px 0 var(--border);
+      z-index: 10;
+    }
+    .step strong {
+      font-family: var(--font-heading);
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 1.15rem;
+    }
+
+    /* ── Versions ── */
+    .versions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.85rem;
+    }
+    .ver {
+      font-size: 0.95rem;
+      padding: 0.3rem 0.65rem;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 10px 6px 12px 5px / 6px 11px 5px 10px;
+      box-shadow: 2px 2px 0 var(--border);
+      transition: transform 0.1s ease, background 0.1s ease;
+    }
+    .ver:hover {
+      background: var(--postit);
+      transform: rotate(-2deg);
+    }
+
+    /* ── Roadmap ── */
+    .roadmap-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1.05rem;
+    }
+    .roadmap-table th,
+    .roadmap-table td {
+      padding: 0.65rem 0.5rem;
+      border-bottom: 2px dashed var(--muted);
+      text-align: left;
+    }
+    .status-now {
+      font-family: var(--font-heading);
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .status-future {
+      font-family: var(--font-heading);
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    /* ── Support ── */
+    #support {
+      text-align: center;
+      padding: 2.5rem 1.75rem;
+      transform: rotate(0.4deg);
+      box-shadow: var(--shadow);
     }
     #support .support-desc {
-      color: #4b5563;
-      max-width: 36rem;
-      margin: 0 auto 2rem;
-      font-size: 1rem;
+      max-width: 34rem;
+      margin: 0 auto 1.75rem;
+      font-size: 1.15rem;
     }
     .support-cards {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
-      gap: 2.5rem;
-      position: relative;
-      z-index: 3;
-      pointer-events: auto;
+      gap: 2rem;
     }
     .support-cards a {
-      position: relative;
-      z-index: 4;
-      cursor: pointer;
-      flex-shrink: 0;
+      display: inline-block;
+      transition: transform 0.1s ease;
     }
     .support-cards a:hover {
-      transform: scale(1.04);
+      transform: rotate(-2deg) scale(1.04);
     }
+    .support-cards img { border: 0; display: block; }
 
-    .roadmap-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .roadmap-table td, .roadmap-table th {
-      padding: 0.65rem 0.5rem;
-      border-bottom: 1px solid var(--border);
-      color: var(--muted);
-      text-align: left;
-    }
-    .status-now { color: var(--accent); font-weight: 600; }
-    .status-future { color: var(--purple); font-weight: 600; }
-
+    /* ── Footer ── */
     footer {
       text-align: center;
       margin-top: 3rem;
       padding-top: 2rem;
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 0.88rem;
+      border-top: 3px dashed var(--muted);
     }
     footer nav {
       display: flex;
       flex-wrap: wrap;
-      gap: 1.25rem;
+      gap: 1.25rem 1.75rem;
       justify-content: center;
       margin-bottom: 1rem;
     }
-    footer a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
-    footer a:hover { color: var(--gold); }
+    footer nav a {
+      text-decoration: none;
+      color: var(--fg);
+      font-size: 1.1rem;
+      position: relative;
+    }
+    footer nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -2px;
+      height: 3px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8'%3E%3Cpath d='M0 4 Q25 0 50 4 T100 4' fill='none' stroke='%232d2d2d' stroke-width='2'/%3E%3C/svg%3E") repeat-x;
+      background-size: 40px 8px;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    footer nav a:hover::after { opacity: 1; }
+    footer nav a:hover {
+      text-decoration: line-through;
+      color: var(--accent);
+    }
+
+    .deco-bounce {
+      display: none;
+      position: absolute;
+      right: -1rem;
+      top: 2rem;
+      width: 48px;
+      height: 48px;
+      border: 3px dashed var(--accent);
+      border-radius: 50% 45% 55% 48% / 48% 55% 45% 50%;
+      animation: bounce-deco 3s ease-in-out infinite;
+      opacity: 0.5;
+    }
+
+    /* ── Reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px) rotate(0.5deg);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0) rotate(0deg);
+    }
+
+    .section-pad { padding: var(--section-pad) 0 0; }
+
+    @media (min-width: 768px) {
+      .cta-arrow { display: block; }
+      .steps-squiggle { display: block; }
+      .deco-bounce { display: block; }
+    }
 
     @media (max-width: 720px) {
       .hero {
         grid-template-columns: 1fr;
         text-align: center;
-        margin-top: -3rem;
       }
-      .logo-frame { margin: 0 auto; }
+      .hero-logo-wrap { margin: 0 auto; }
       .badges, .cta-row { justify-content: center; }
       .hero-text .tagline { margin-left: auto; margin-right: auto; }
+      .feature-card { transform: none !important; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="bg-layer" aria-hidden="true">
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-    <div class="bg-orb bg-orb-3"></div>
-  </div>
-
   <div class="page">
-    <div class="banner-hero">
+    <div class="top-banner wobbly-md" aria-hidden="false">
+      <span class="corner-frame" aria-hidden="true"></span>
       <img src="docs/banner.jpg" alt="BeatBlocks Control — Your music. Your world. One perfect vibe." width="1024" height="384" />
     </div>
 
     <header class="hero">
-      <div class="logo-frame">
-        <div class="logo-glow" aria-hidden="true"></div>
-        <img class="hero-logo" src="docs/logo.jpg" alt="BeatBlocks Control" width="140" height="140" />
+      <div class="deco-bounce" aria-hidden="true"></div>
+      <div class="hero-logo-wrap">
+        <img class="hero-logo" src="docs/logo.jpg" alt="BeatBlocks Control logo" width="132" height="132" />
       </div>
       <div class="hero-text">
-        <h1><span class="brand">BeatBlocks</span> Control</h1>
+        <span class="sticky-label">Fabric client mod</span>
+        <h1>
+          <span style="color: var(--blue);">BeatBlocks</span> Control<span class="hero-bang">!</span>
+        </h1>
         <p class="tagline">Your music. Your world. Control Spotify from Minecraft — overlay, HUD, playlists, and hotkeys. No API keys in the mod.</p>
         <div class="badges">
           <span class="badge"><strong>Fabric</strong> client</span>
@@ -452,64 +557,86 @@
         </div>
       </div>
       <div class="cta-row">
-        <a class="btn btn-primary" href="https://github.com/vyas-devgna/beatblocks-control/releases/latest">Download JARs</a>
-        <a class="btn btn-modrinth" href="https://modrinth.com/project/beatblocks">Modrinth</a>
-        <a class="btn btn-secondary" href="https://github.com/vyas-devgna/beatblocks-control">GitHub</a>
-        <a class="btn btn-secondary" href="CONTRIBUTING.md">Contribute</a>
+        <svg class="cta-arrow" viewBox="0 0 80 48" fill="none" aria-hidden="true">
+          <path d="M4 24 C20 8 40 40 76 12" stroke="currentColor" stroke-width="2.5" stroke-dasharray="6 4" stroke-linecap="round"/>
+          <path d="M68 8 L76 12 L72 20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <a class="btn" href="https://github.com/vyas-devgna/beatblocks-control/releases/latest">
+          <i data-lucide="download"></i> Download JARs
+        </a>
+        <a class="btn btn-modrinth" href="https://modrinth.com/project/beatblocks">
+          <i data-lucide="package"></i> Modrinth
+        </a>
+        <a class="btn btn-secondary" href="https://github.com/vyas-devgna/beatblocks-control">
+          <i data-lucide="github"></i> GitHub
+        </a>
+        <a class="btn btn-secondary" href="CONTRIBUTING.md">
+          <i data-lucide="pencil"></i> Contribute
+        </a>
       </div>
     </header>
 
     <div class="features-grid reveal" aria-label="Features">
-      <article class="feature-card">
-        <div class="icon" aria-hidden="true">🎵</div>
+      <article class="feature-card sketch-card postit wobbly-md">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="icon-circle"><i data-lucide="music"></i></div>
         <h3>In-game music control</h3>
         <p>Play, pause, skip, and browse without alt-tabbing out of Minecraft.</p>
       </article>
-      <article class="feature-card">
-        <div class="icon" aria-hidden="true">💚</div>
+      <article class="feature-card sketch-card postit wobbly-md">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="icon-circle"><i data-lucide="disc-3"></i></div>
         <h3>Now-playing HUD</h3>
         <p>Track, artist, and sharp cached album art while you play.</p>
       </article>
-      <article class="feature-card">
-        <div class="icon" aria-hidden="true">⭐</div>
+      <article class="feature-card sketch-card postit wobbly-md">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="icon-circle"><i data-lucide="list-music"></i></div>
         <h3>Playlists &amp; albums</h3>
         <p>Liked songs, playlists, albums, and queue in the enhanced overlay.</p>
       </article>
-      <article class="feature-card">
-        <div class="icon" aria-hidden="true">🎮</div>
+      <article class="feature-card sketch-card postit wobbly-md">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="icon-circle"><i data-lucide="gamepad-2"></i></div>
         <h3>Hotkeys &amp; overlay</h3>
         <p>Alt+I overlay plus J / K / L — all configurable.</p>
       </article>
     </div>
 
-    <section class="block reveal" id="quick-start">
+    <section class="sketch-card wobbly-md reveal section-pad" id="quick-start">
+      <span class="sticky-label">How it works</span>
       <h2>Quick start — 3 steps</h2>
-      <div class="steps">
-        <div class="step">
-          <span class="step-num">1</span>
-          <div>
-            <strong>Spicetify + bridge</strong>
-            <p>Copy <code>beatblocks-api.js</code> to Extensions, run <code>spicetify apply</code>, restart Spotify. Windows: <code>scripts/setup-spicetify-bridge.ps1</code></p>
+      <div class="steps-wrap">
+        <svg class="steps-squiggle" viewBox="0 0 24 200" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M12 0 Q4 50 12 100 T12 200" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>
+        </svg>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <div>
+              <strong>Spicetify + bridge</strong>
+              <p>Copy <code>beatblocks-api.js</code> to Extensions, run <code>spicetify apply</code>, restart Spotify. Windows: <code>scripts/setup-spicetify-bridge.ps1</code></p>
+            </div>
           </div>
-        </div>
-        <div class="step">
-          <span class="step-num">2</span>
-          <div>
-            <strong>Install the mod</strong>
-            <p>Download the JAR for your exact MC version → <code>mods/</code> + Fabric API.</p>
+          <div class="step">
+            <span class="step-num">2</span>
+            <div>
+              <strong>Install the mod</strong>
+              <p>Download the JAR for your exact MC version → <code>mods/</code> + Fabric API.</p>
+            </div>
           </div>
-        </div>
-        <div class="step">
-          <span class="step-num">3</span>
-          <div>
-            <strong>Play</strong>
-            <p>Spotify running → Minecraft → <strong>Alt+I</strong> or <code>/sp</code>. <strong>J / K / L</strong> for transport.</p>
+          <div class="step">
+            <span class="step-num">3</span>
+            <div>
+              <strong>Play</strong>
+              <p>Spotify running → Minecraft → <strong>Alt+I</strong> or <code>/sp</code>. <strong>J / K / L</strong> for transport.</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="block reveal">
+    <section class="sketch-card wobbly-md reveal">
       <h2>Supported versions</h2>
       <p>One JAR per patch — match your game exactly.</p>
       <div class="versions">
@@ -520,7 +647,7 @@
       </div>
     </section>
 
-    <section class="block reveal">
+    <section class="sketch-card wobbly-md reveal">
       <h2>Roadmap</h2>
       <table class="roadmap-table">
         <tr><th>Status</th><th>Plan</th></tr>
@@ -529,18 +656,23 @@
       </table>
     </section>
 
-    <section id="support" aria-label="Support the project">
+    <section id="support" class="sketch-card wobbly-md reveal" aria-label="Support the project">
+      <span class="tack" aria-hidden="true"></span>
       <h2>Support BeatBlocks</h2>
       <p class="support-desc">Built in spare time. Sponsorship and tips help fund the Spotify API roadmap and keep updates coming.</p>
-      <div class="support-cards" style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2rem;">
-        <a href="https://github.com/sponsors/vyas-devgna" target="_blank" rel="noopener noreferrer" title="Sponsor vyas-devgna on GitHub"><img src="https://img.shields.io/badge/Sponsor-@vyas--devgna-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="GitHub Sponsors" height="40" style="border:0;display:block;" /></a>
-        <a href="https://chai4.me/vyasdevgna" target="_blank" rel="noopener noreferrer" title="Support vyasdevgna on Chai4Me" style="display:inline-block;line-height:0;"><img src="docs/chai4me-support.png" alt="Chai4Me @vyasdevgna" height="56" style="border:0;display:block;height:56px;width:auto;" /></a>
+      <div class="support-cards">
+        <a href="https://github.com/sponsors/vyas-devgna" target="_blank" rel="noopener noreferrer" title="Sponsor vyas-devgna on GitHub">
+          <img src="https://img.shields.io/badge/Sponsor-@vyas--devgna-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="GitHub Sponsors" height="40" />
+        </a>
+        <a href="https://chai4.me/vyasdevgna" target="_blank" rel="noopener noreferrer" title="Support vyasdevgna on Chai4Me">
+          <img src="docs/chai4me-support.png" alt="Chai4Me @vyasdevgna" height="56" style="height:56px;width:auto;" />
+        </a>
       </div>
     </section>
 
-    <section class="block reveal">
+    <section class="sketch-card wobbly-md reveal">
       <h2>Privacy</h2>
-      <p>Talks only to <code>127.0.0.1</code> — no telemetry, no credentials in Minecraft. <a href="SECURITY.md" style="color:var(--accent)">SECURITY.md</a></p>
+      <p>Talks only to <code>127.0.0.1</code> — no telemetry, no credentials in Minecraft. <a href="SECURITY.md">SECURITY.md</a></p>
     </section>
 
     <footer class="reveal">
@@ -551,12 +683,14 @@
         <a href="README.md">README</a>
         <a href="CONTRIBUTING.md">Contributing</a>
       </nav>
-      <p>MIT · BeatBlocks Control</p>
+      <p>MIT · BeatBlocks Control · sketched with care</p>
     </footer>
   </div>
 
   <script>
     (function () {
+      if (window.lucide) lucide.createIcons();
+
       var els = document.querySelectorAll(".reveal");
       if (!("IntersectionObserver" in window)) {
         els.forEach(function (e) { e.classList.add("visible"); });
@@ -569,7 +703,7 @@
             io.unobserve(en.target);
           }
         });
-      }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+      }, { threshold: 0.1, rootMargin: "0px 0px -32px 0px" });
       els.forEach(function (el) { io.observe(el); });
     })();
   </script>
