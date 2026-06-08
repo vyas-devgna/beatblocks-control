@@ -65,7 +65,7 @@ Restart Spotify after apply.
 3. Download the **JAR for your exact Minecraft version** and put it in `mods/` with **Fabric API**
 4. Launch Minecraft, start playback in Spotify, press **Alt+I** (default) to open the overlay
 
-Full guide: [GitHub README](https://github.com/vyas-devgna/beatblocks-control#try-it-in-5-minutes) · [Website](https://vyas-devgna.github.io/beatblocks-control/)
+Full guide: [GitHub README](https://github.com/vyas-devgna/beatblocks-control#try-it-in-5-minutes) · [Website](https://blockbeats.vyasdevgna.online/)
 
 ## Default controls
 
@@ -119,7 +119,7 @@ File: `.minecraft/config/beatblocks/beatblocks.json`
 
 ## Links
 
-- **Website:** https://vyas-devgna.github.io/beatblocks-control/
+- **Website:** https://blockbeats.vyasdevgna.online/
 - **Source & issues:** https://github.com/vyas-devgna/beatblocks-control
 - **Releases:** https://github.com/vyas-devgna/beatblocks-control/releases
 
@@ -157,7 +157,7 @@ Fabric client mod to control Spotify from in-game (overlay, HUD, hotkeys) via a 
 - Global hotkeys (default Alt+I, J/K/L)
 - Localhost bridge only — no API keys in the mod
 
-**Website:** https://vyas-devgna.github.io/beatblocks-control/  
+**Website:** https://blockbeats.vyasdevgna.online/  
 **Source:** https://github.com/vyas-devgna/beatblocks-control
 """
 
@@ -183,7 +183,7 @@ def main() -> None:
         "server_side": "unsupported",
         "issues_url": "https://github.com/vyas-devgna/beatblocks-control/issues",
         "source_url": "https://github.com/vyas-devgna/beatblocks-control",
-        "wiki_url": "https://vyas-devgna.github.io/beatblocks-control/",
+        "wiki_url": "https://blockbeats.vyasdevgna.online/",
         "requested_status": "approved",
         "donation_urls": [
             {
@@ -194,7 +194,7 @@ def main() -> None:
             {
                 "id": "other",
                 "platform": "UPI Tip",
-                "url": "https://vyas-devgna.github.io/Portfolio/tip.html",
+                "url": "https://vyasdevgna.online//Portfolio/tip.html",
             },
         ],
     }

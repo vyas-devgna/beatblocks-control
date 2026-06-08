@@ -23,7 +23,7 @@
   &nbsp;
   <a href="https://modrinth.com/project/beatblocks"><img src="https://img.shields.io/modrinth/dt/beatblocks?label=Modrinth&style=for-the-badge&color=00af5c&logo=modrinth" alt="Modrinth" /></a>
   &nbsp;
-  <a href="https://vyas-devgna.github.io/beatblocks-control/"><img src="https://img.shields.io/badge/Website-visit-111827?style=for-the-badge" alt="Website" /></a>
+  <a href="https://blockbeats.vyasdevgna.online/"><img src="https://img.shields.io/badge/Website-visit-111827?style=for-the-badge" alt="Website" /></a>
 </p>
 
 <p align="center">
@@ -162,7 +162,7 @@ BeatBlocks is built in spare time. **Sponsors and tips** help fund the Spotify A
 <p align="center">
   <a href="https://github.com/sponsors/vyas-devgna"><img src="https://img.shields.io/badge/Sponsor-@vyas--devgna-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="Sponsor @vyas-devgna on GitHub" height="32" /></a>
   &nbsp;&nbsp;&nbsp;
-  <a href="https://vyas-devgna.github.io/Portfolio/tip.html"><img src="https://raw.githubusercontent.com/vyas-devgna/beatblocks-control/main/docs/upi-logo.png" alt="Tip via UPI" width="88" height="31" style="vertical-align:middle;" /></a>
+  <a href="https://vyasdevgna.online//Portfolio/tip.html"><img src="https://raw.githubusercontent.com/vyas-devgna/beatblocks-control/main/docs/upi-logo.png" alt="Tip via UPI" width="88" height="31" style="vertical-align:middle;" /></a>
 </p>
 
 ---
@@ -197,7 +197,7 @@ See [TESTING.md](TESTING.md) · [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.
 
 | | |
 |--|--|
-| **Website** | https://vyas-devgna.github.io/beatblocks-control/ |
+| **Website** | https://blockbeats.vyasdevgna.online/ |
 | **Releases** | https://github.com/vyas-devgna/beatblocks-control/releases |
 | **Modrinth** | https://modrinth.com/project/beatblocks |
 | **Issues** | https://github.com/vyas-devgna/beatblocks-control/issues |
